@@ -1,42 +1,64 @@
 (function(window) {
-  var { camera, scene, renderer } = init();
-  var { globe, onRenderFcts} = renderGlobe(scene);
-  setUpCamera(scene);
-  // Schedule the first frame:
-  requestAnimationFrame(update);
-  // addKeyboardListener();
-  addMouseListener();
+  // TODO fix texture has been resized problem
+  // TODO move init logic to separate file
+  const renderer = initRenderer();
+  const scene = initScene();
+  const camera = initCamera();
+  addLight(scene);
+  const globe = createGlobe(scene);
+  const clouds = createClouds(scene);
+  addStarField(scene);
+  render({ renderer, globe, clouds, scene, camera });
 
-  function init() {
-    var camera = new THREE.PerspectiveCamera(
-      45,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      100000
-    );
-    camera.position.set(0, 0, 2);
-
-    var scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000);
-    scene.add(camera);
-
-    var renderer = new THREE.WebGLRenderer();
+  function initRenderer() {
+    const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    window.document.body.appendChild(renderer.domElement);
+    document.body.appendChild(renderer.domElement);
 
-    return { camera, scene, renderer };
+    return renderer;
   }
 
-  function renderGlobe(scene) {
-    var geometry = new THREE.SphereGeometry(0.5, 32, 32);
-    var material = new THREE.MeshPhongMaterial();
-    var globe = new THREE.Mesh(geometry, material);
-    material.map = THREE.ImageUtils.loadTexture("img/earthmap1k.jpg");
-    material.bumpMap = THREE.ImageUtils.loadTexture("img/earthbump1k.jpg");
-    material.bumpScale = 0.05;
-    material.specularMap = THREE.ImageUtils.loadTexture("img/earthspec1k.jpg");
-    material.specular = new THREE.Color("grey");
+  function initScene() {
+    return new THREE.Scene();
+  }
 
+  function initCamera() {
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.01,
+      1000
+    );
+    camera.position.z = 1.5;
+
+    return camera;
+  }
+
+  function addLight(scene) {
+    const ambientLight = new THREE.AmbientLight(0x888888);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xcccccc, 1);
+    directionalLight.position.set(5, 3, 5);
+    scene.add(directionalLight);
+  }
+
+  function createGlobe(scene) {
+    const geometry = new THREE.SphereGeometry(0.5, 32, 32);
+    const material = new THREE.MeshPhongMaterial();
+    const globe = new THREE.Mesh(geometry, material);
+    const loader = new THREE.TextureLoader()
+    material.map = loader.load("img/earthmap1k.jpg");
+    material.bumpMap = loader.load("img/earthbump1k.jpg");
+    material.bumpScale = 0.05;
+    material.specularMap = loader.load("img/earthspec1k.jpg");
+    material.specular = new THREE.Color("grey");
+    scene.add(globe);
+
+    return globe;
+  }
+
+  function createClouds(scene) {
     // create destination canvas
     var canvasResult = document.createElement("canvas");
     canvasResult.width = 1024;
@@ -103,112 +125,66 @@
     var material = new THREE.MeshPhongMaterial({
       map: new THREE.Texture(canvasResult),
       side: THREE.DoubleSide,
-      opacity: 0.8,
       transparent: true,
-      depthWrite: false
+      opacity: 0.8
     });
-    var cloudMesh = new THREE.Mesh(geometry, material);
-    globe.add(cloudMesh);
+    var mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    return mesh;
+  }
 
-    scene.add(globe);
+  function addStarField(scene) {
+    var geometry = new THREE.SphereGeometry(90, 32, 32);
+    var material = new THREE.MeshBasicMaterial();
+    const loader = new THREE.TextureLoader()
+    material.map = loader.load("img/galaxy_starfield.png");
+    material.side = THREE.BackSide;
+    var mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+  }
 
-    var onRenderFcts = []
+  function render({ renderer, globe, scene, camera, clouds }) {
+    const onRenderFcts = [];
+    
+    onRenderFcts.push(function(delta, now) {
+      globe.rotateY((1 / 32) * delta);
+    });
 
     onRenderFcts.push(function(delta, now) {
-      globe.rotation.y += (1 / 32) * delta;
+      clouds.rotateY((1 / 16) * delta);
     });
 
+    const mouse = { x: 0, y: 0 };
+    document.addEventListener(
+      "mousemove",
+      function(event) {
+        mouse.x = event.clientX / window.innerWidth - 0.5;
+        mouse.y = event.clientY / window.innerHeight - 0.5;
+      },
+      false
+    );
     onRenderFcts.push(function(delta, now) {
-      cloudMesh.rotation.y += (1 / 16) * delta;
+      camera.position.x += (mouse.x * 5 - camera.position.x) * (delta * 3);
+      camera.position.y += (mouse.y * 5 - camera.position.y) * (delta * 3);
+      camera.lookAt(scene.position);
     });
-    return {globe, onRenderFcts};
-  }
 
-  function setUpCamera(scene) {
-    const pointLight = new THREE.PointLight(0xffffff);
+    onRenderFcts.push(function() {
+      renderer.render(scene, camera);
+    });
 
-    pointLight.position.x = 10;
-    pointLight.position.y = 10;
-    pointLight.position.z = 10;
-
-    scene.add(pointLight);
-  }
-
-  function update() {
-    //Render:
-    renderer.render(scene, camera);
-
-    // Schedule the next frame:
-    requestAnimationFrame(update);
-  }
-
-  function animationBuilder(direction) {
-    return function animateRotate() {
-      switch (direction) {
-        case "up":
-          globe.rotation.x -= 0.2;
-          break;
-        case "down":
-          globe.rotation.x += 0.2;
-          break;
-        case "left":
-          globe.rotation.y -= 0.2;
-          break;
-        case "right":
-          globe.rotation.y += 0.2;
-          break;
-        default:
-          break;
-      }
-    };
-  }
-
-  var animateDirection = {
-    up: animationBuilder("up"),
-    down: animationBuilder("down"),
-    left: animationBuilder("left"),
-    right: animationBuilder("right")
-  };
-
-  function checkKey(e) {
-    e = e || window.event;
-    e.preventDefault();
-
-    //based on keycode, trigger appropriate animation:
-    if (e.keyCode == "38") {
-      animateDirection.up();
-    } else if (e.keyCode == "40") {
-      animateDirection.down();
-    } else if (e.keyCode == "37") {
-      animateDirection.left();
-    } else if (e.keyCode == "39") {
-      animateDirection.right();
-    }
-  }
-
-  function addKeyboardListener() {
-    window.document.addEventListener("keydown", checkKey);
-  }
-
-  function addMouseListener() {
-    var lastMove = [window.innerWidth / 2, window.innerHeight / 2];
-
-    function rotateOnMouseMove(e) {
-      e = e || window.event;
-
-      //calculate difference between current and last mouse position
-      const moveX = e.clientX - lastMove[0];
-      const moveY = e.clientY - lastMove[1];
-      //rotate the globe based on distance of mouse moves (x and y)
-      globe.rotation.y += moveX * 0.005;
-      globe.rotation.x += moveY * 0.005;
-
-      //store new position in lastMove
-      lastMove[0] = e.clientX;
-      lastMove[1] = e.clientY;
-    }
-
-    document.addEventListener("mousemove", rotateOnMouseMove);
+    var lastTimeMsec = null;
+    requestAnimationFrame(function animate(nowMsec) {
+      // keep looping
+      requestAnimationFrame(animate);
+      // measure time
+      lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60;
+      var deltaMsec = Math.min(200, nowMsec - lastTimeMsec);
+      lastTimeMsec = nowMsec;
+      // call each update function
+      onRenderFcts.forEach(function(onRenderFct) {
+        onRenderFct(deltaMsec / 1000, nowMsec / 1000);
+      });
+    });
   }
 })(window);
-
