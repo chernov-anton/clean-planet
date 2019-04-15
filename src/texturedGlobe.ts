@@ -18,27 +18,28 @@ interface RenderOptions {
   globe: THREE.Mesh;
   clouds: THREE.Mesh;
   scene: THREE.Scene;
-  camera: THREE.Camera;
+  camera: THREE.PerspectiveCamera;
+  container: HTMLElement;
 }
 
 type RenderFunc = (delta: number, now: number) => void;
 
-function init(): void {
+function init(container: HTMLElement): void {
   // TODO move init logic to separate file
-  const renderer = initRenderer();
+  const renderer = initRenderer(container);
   const scene = initScene();
-  const camera = initCamera();
+  const camera = initCamera(container);
   addLight(scene);
   const globe = createGlobe(scene);
   const clouds = createClouds(scene);
   addStarField(scene);
-  render({ renderer, globe, clouds, scene, camera });
+  render({ renderer, globe, clouds, scene, camera, container });
 }
 
-function initRenderer(): THREE.WebGLRenderer {
+function initRenderer(container: HTMLElement): THREE.WebGLRenderer {
   const renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
 
   return renderer;
 }
@@ -47,10 +48,10 @@ function initScene(): THREE.Scene {
   return new THREE.Scene();
 }
 
-function initCamera(): THREE.Camera {
+function initCamera(container: HTMLElement): THREE.PerspectiveCamera {
   const camera = new THREE.PerspectiveCamera(
     45,
-    window.innerWidth / window.innerHeight,
+    container.clientWidth / container.clientHeight,
     0.01,
     1000
   );
@@ -183,7 +184,7 @@ function addStarField(scene: THREE.Scene): void {
   scene.add(mesh);
 }
 
-function render({ renderer, globe, scene, camera, clouds }: RenderOptions): void {
+function render({ renderer, globe, scene, camera, clouds, container }: RenderOptions): void {
   const renderFuncs: RenderFunc[] = [];
 
   renderFuncs.push(
@@ -199,7 +200,7 @@ function render({ renderer, globe, scene, camera, clouds }: RenderOptions): void
   );
 
   const mouse = { x: 0, y: 0 };
-  document.addEventListener(
+  window.addEventListener(
     'mousemove',
     function(event): void {
       mouse.x = event.clientX / window.innerWidth - 0.5;
@@ -207,6 +208,13 @@ function render({ renderer, globe, scene, camera, clouds }: RenderOptions): void
     },
     false
   );
+
+  window.addEventListener('resize', function onWindowResize(): void {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.scrollWidth, container.scrollHeight);
+  });
+
   renderFuncs.push(
     (delta: number): void => {
       camera.position.x += (mouse.x * 5 - camera.position.x) * (delta * 3);

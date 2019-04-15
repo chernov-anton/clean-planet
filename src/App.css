@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .App-header {
@@ -10,4 +13,10 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.Three-container {
+  width: 100%;
+  flex: 1;
+  overflow: hidden;
 }
