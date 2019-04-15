@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/jest": "24.0.11",
-    "@types/node": "11.13.4",
-    "@types/react": "16.8.13",
-    "@types/react-dom": "16.8.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "2.1.8",
@@ -30,6 +26,11 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@types/three": "^0.103.2",
+    "@types/jest": "24.0.11",
+    "@types/node": "11.13.4",
+    "@types/react": "16.8.13",
+    "@types/react-dom": "16.8.4",
     "@typescript-eslint/eslint-plugin": "^1.6.0",
     "@typescript-eslint/parser": "^1.6.0",
     "eslint-config-prettier": "^4.1.0",
@@ -40,8 +41,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "export CI=true && npm run build && lint-staged && npm test",
-      "pre-push": "export CI=true && npm run build && lint-staged && npm test"
+      "pre-commit": "export CI=true && lint-staged && npm test",
+      "pre-push": "export CI=true && lint-staged && npm test"
     }
   },
   "lint-staged": {
