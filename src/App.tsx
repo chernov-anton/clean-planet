@@ -1,5 +1,5 @@
 import React, { Component, RefObject } from 'react';
-import './App.css';
+import style from './app.module.css';
 import init from './texturedGlobe';
 
 class App extends Component {
@@ -13,9 +13,9 @@ class App extends Component {
 
   public render(): React.ReactNode {
     return (
-      <div className="App">
-        <header className="App-header">CLEAN PLANET</header>
-        <main className="Three-container" ref={this.threeContainer} />
+      <div className={style.app}>
+        <header className={style.appHeader}>CLEAN PLANET</header>
+        <main className={style.threeContainer} ref={this.threeContainer} />
         <footer>© Anton Chernov 2019</footer>
       </div>
     );

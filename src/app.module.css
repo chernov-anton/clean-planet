@@ -1,11 +1,11 @@
-.App {
+.app {
   text-align: center;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.App-header {
+.appHeader {
   background-color: #282c34;
   display: flex;
   flex-direction: column;
@@ -15,7 +15,7 @@
   color: white;
 }
 
-.Three-container {
+.threeContainer {
   width: 100%;
   flex: 1;
   overflow: hidden;
