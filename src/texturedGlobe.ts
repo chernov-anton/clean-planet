@@ -212,7 +212,7 @@ function render({ renderer, globe, scene, camera, clouds, container }: RenderOpt
   window.addEventListener('resize', function onWindowResize(): void {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(container.scrollWidth, container.scrollHeight);
+    renderer.setSize(container.clientWidth, container.clientHeight);
   });
 
   renderFuncs.push(
