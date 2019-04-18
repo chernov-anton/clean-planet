@@ -1,25 +1,25 @@
-import React, { Component, RefObject } from 'react';
+import React, { useEffect, useRef, ReactElement } from 'react';
 import style from './app.module.css';
 import init from './texturedGlobe';
 
-class App extends Component {
-  private threeContainer: RefObject<HTMLMainElement> = React.createRef();
+function App(): ReactElement {
+  const threeContainer = useRef<HTMLElement>(null);
 
-  public componentDidMount(): void {
-    if (this.threeContainer.current) {
-      init(this.threeContainer.current);
+  useEffect(
+    (): void => {
+      if (threeContainer.current) {
+        init(threeContainer.current);
+      }
     }
-  }
+  );
 
-  public render(): React.ReactNode {
-    return (
-      <div className={style.app}>
-        <header className={style.appHeader}>CLEAN PLANET</header>
-        <main className={style.threeContainer} ref={this.threeContainer} />
-        <footer>© Anton Chernov 2019</footer>
-      </div>
-    );
-  }
+  return (
+    <div className={style.app}>
+      <header className={style.appHeader}>CLEAN PLANET</header>
+      <main className={style.threeContainer} ref={threeContainer} />
+      <footer>© Anton Chernov 2019</footer>
+    </div>
+  );
 }
 
 export default App;
