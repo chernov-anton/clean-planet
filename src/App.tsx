@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, ReactElement } from 'react';
+import React, { useEffect, useRef, ReactElement, RefObject } from 'react';
 import style from './app.module.css';
 import Globe from './components/globe/Globe';
 
-function App(): ReactElement {
+function useGlobe(): RefObject<HTMLElement> {
   const threeContainer = useRef<HTMLElement>(null);
 
   useEffect(
@@ -13,6 +13,12 @@ function App(): ReactElement {
       }
     }
   );
+
+  return threeContainer;
+}
+
+function App(): ReactElement {
+  const threeContainer = useGlobe();
 
   return (
     <div className={style.app}>
