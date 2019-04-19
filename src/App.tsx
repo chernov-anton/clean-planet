@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, ReactElement } from 'react';
 import style from './app.module.css';
-import init from './texturedGlobe';
+import Globe from './components/globe/Globe';
 
 function App(): ReactElement {
   const threeContainer = useRef<HTMLElement>(null);
@@ -8,7 +8,8 @@ function App(): ReactElement {
   useEffect(
     (): void => {
       if (threeContainer.current) {
-        init(threeContainer.current);
+        const globe = new Globe(threeContainer.current);
+        globe.render();
       }
     }
   );
