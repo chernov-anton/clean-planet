@@ -93,7 +93,7 @@ class Globe {
     const material = new THREE.MeshPhongMaterial();
     const globe = new THREE.Mesh(geometry, material);
     const loader = new THREE.TextureLoader();
-    material.map = loader.load('img/earthmap1k.jpg');
+    material.map = loader.load('img/earth_texture.jpg');
     material.bumpMap = loader.load('img/earthbump1k.jpg');
     material.bumpScale = 0.05;
     material.specularMap = loader.load('img/earthspec1k.jpg');
@@ -245,8 +245,8 @@ class Globe {
 
     renderFuncs.push(
       (delta: number): void => {
-        camera.position.x += (mouse.x * 5 - camera.position.x) * (delta * 3);
-        camera.position.y += (mouse.y * 5 - camera.position.y) * (delta * 3);
+        camera.position.x += mouse.x * 2 - camera.position.x;
+        camera.position.y += mouse.y * 2 - camera.position.y;
         camera.lookAt(scene.position);
       }
     );
