@@ -13,16 +13,13 @@ interface TransLoadOptions extends MapLoadOptions {
   mapContext: CanvasRenderingContext2D;
 }
 
-interface RenderOptions {
-  renderer: THREE.Renderer;
-  globe: THREE.Mesh;
-  clouds: THREE.Mesh;
-  scene: THREE.Scene;
-  camera: THREE.PerspectiveCamera;
-  container: HTMLElement;
-}
-
 type RenderFunc = (delta: number, now: number) => void;
+
+const EARTH_IMAGE = 'img/earth_texture.jpg';
+const EARTH_BUMP = 'img/earthbump1k.jpg';
+const EARTH_SPEC = 'img/earthspec1k.jpg';
+const CLOUD_IMAGE = 'img/earthcloudmap.jpg';
+const CLOUD_IMAGE_TRANS = 'img/earthcloudmaptrans.jpg';
 
 class Globe {
   private container: HTMLElement;
@@ -93,10 +90,10 @@ class Globe {
     const material = new THREE.MeshPhongMaterial();
     const globe = new THREE.Mesh(geometry, material);
     const loader = new THREE.TextureLoader();
-    material.map = loader.load('img/earth_texture.jpg');
-    material.bumpMap = loader.load('img/earthbump1k.jpg');
+    material.map = loader.load(EARTH_IMAGE);
+    material.bumpMap = loader.load(EARTH_BUMP);
     material.bumpScale = 0.05;
-    material.specularMap = loader.load('img/earthspec1k.jpg');
+    material.specularMap = loader.load(EARTH_SPEC);
     material.specular = new THREE.Color('grey');
     this.scene.add(globe);
 
@@ -125,7 +122,7 @@ class Globe {
     // load earthcloudmap
     const mapImage = new Image();
     mapImage.addEventListener('load', this.onMapLoad({ mapImage, resultContext, material }), false);
-    mapImage.src = 'img/earthcloudmap.jpg';
+    mapImage.src = CLOUD_IMAGE;
 
     return mesh;
   }
@@ -157,7 +154,7 @@ class Globe {
           material,
         })
       );
-      transImage.src = 'img/earthcloudmaptrans.jpg';
+      transImage.src = CLOUD_IMAGE_TRANS;
     };
   }
 
