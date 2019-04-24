@@ -48,7 +48,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "export CI=true && lint-staged && npm test",
+      "pre-commit": "export CI=true && lint-staged",
       "pre-push": "export CI=true && lint-staged && npm test"
     }
   },
