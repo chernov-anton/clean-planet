@@ -22,9 +22,9 @@ function App(): ReactElement {
 
   return (
     <div className={style.app}>
-      <header className={style.appHeader}>CLEAN PLANET</header>
+      {/*<header className={style.appHeader}>CLEAN PLANET</header>*/}
       <main className={style.threeContainer} ref={threeContainer} />
-      <footer>© Anton Chernov 2019</footer>
+      {/*<footer>© Anton Chernov 2019</footer>*/}
     </div>
   );
 }

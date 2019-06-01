@@ -1,26 +1,33 @@
 import * as THREE from 'three';
 import Controls from './Controls';
+import CountrySelect from './CountrySelect';
+
+/* eslint import/no-webpack-loader-syntax: off */
+import fragmentShader from '!raw-loader!glslify-loader!./fragment.glsl';
+/* eslint import/no-webpack-loader-syntax: off */
+import vertexShader from '!raw-loader!glslify-loader!./vertex.glsl';
+import { Uniforms } from './types';
 
 type RenderFunc = (delta: number, now: number) => void;
 
-const EARTH_IMAGE = 'img/2_no_clouds_4k.jpg';
-const EARTH_BUMP = 'img/elev_bump_4k.jpg';
-const EARTH_SPEC = 'img/water_4k.png';
-const CLOUD_IMAGE = 'img/fair_clouds_4k.png';
-const STAR_IMAGE = 'img/galaxy_starfield.png';
+const INDEXED_MAP_IMAGE = 'img/map_indexed.png';
+const OUTLINED_MAP_IMAGE = 'img/map_outline.png';
 
-const MAX_ZOOM = 0.7;
-const MIN_ZOOM = 5;
+const MAX_ZOOM = 1;
+const MIN_ZOOM = 4;
 
 class Globe {
   private container: HTMLElement;
   private controls: Controls;
-  private renderer: THREE.WebGLRenderer;
-  private scene: THREE.Scene;
-  private camera: THREE.PerspectiveCamera;
-  private center: THREE.Vector3;
-  private globe: THREE.Mesh;
-  private clouds: THREE.Mesh;
+  private readonly renderer: THREE.WebGLRenderer;
+  private readonly scene: THREE.Scene;
+  private lookupContext?: CanvasRenderingContext2D;
+  private lookupTexture?: THREE.Texture;
+  private readonly camera: THREE.PerspectiveCamera;
+  private readonly center: THREE.Vector3;
+  private readonly globe: THREE.Mesh;
+  private readonly mapContext: CanvasRenderingContext2D;
+  private readonly mapUniforms: Uniforms;
 
   public constructor(container: HTMLElement) {
     this.container = container;
@@ -33,17 +40,11 @@ class Globe {
     const ambientLight = this.initAmbientLight();
     this.scene.add(ambientLight);
 
-    const directionalLight = this.initDirectionalLight();
-    this.scene.add(directionalLight);
-
-    this.globe = this.createGlobe();
+    this.mapUniforms = this.getMapUniforms();
+    this.globe = this.createGlobe(this.mapUniforms);
     this.scene.add(this.globe);
 
-    this.clouds = this.createClouds();
-    this.scene.add(this.clouds);
-
-    const stars = this.initStarField();
-    this.scene.add(stars);
+    this.mapContext = this.createMapContext();
 
     this.controls = new Controls(
       container,
@@ -51,6 +52,19 @@ class Globe {
       this.zoomIn.bind(this),
       this.zoomOut.bind(this)
     );
+
+    if (this.lookupTexture && this.lookupContext) {
+      const select = new CountrySelect({
+        scene: this.scene,
+        lookupContext: this.lookupContext,
+        lookupTexture: this.lookupTexture,
+        mapUniforms: this.mapUniforms,
+        renderer: this.renderer,
+        camera: this.camera,
+      });
+
+      container.addEventListener('click', select.onCountryClick);
+    }
   }
 
   private initRenderer(container: HTMLElement): THREE.WebGLRenderer {
@@ -84,47 +98,71 @@ class Globe {
   }
 
   private initAmbientLight(): THREE.Light {
-    return new THREE.AmbientLight(0x333333);
+    return new THREE.AmbientLight(0xffffff);
   }
 
-  private initDirectionalLight(): THREE.Light {
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 3, 5);
-    return directionalLight;
-  }
-
-  private createGlobe(): THREE.Mesh {
+  private getMapUniforms(): Uniforms {
     const loader = new THREE.TextureLoader();
+
+    const lookupCanvas = document.createElement('canvas');
+    lookupCanvas.width = 256;
+    lookupCanvas.height = 1;
+
+    const lookupContext = lookupCanvas.getContext('2d');
+    if (!lookupContext) {
+      throw new Error('Lookup context is empty!');
+    }
+
+    this.lookupContext = lookupContext;
+
+    const lookupTexture = new THREE.Texture(lookupCanvas);
+    lookupTexture.magFilter = THREE.NearestFilter;
+    lookupTexture.minFilter = THREE.NearestFilter;
+    this.lookupTexture = lookupTexture;
+
+    const mapTexture = loader.load(INDEXED_MAP_IMAGE);
+    mapTexture.magFilter = THREE.NearestFilter;
+    mapTexture.minFilter = THREE.NearestFilter;
+
+    const outlineTexture = loader.load(OUTLINED_MAP_IMAGE);
+
+    return {
+      mapIndex: { type: 't', value: mapTexture },
+      outline: { type: 't', value: outlineTexture },
+      lookup: { type: 't', value: lookupTexture },
+      outlineLevel: { type: 'f', value: 1 },
+    };
+  }
+
+  private createGlobe(uniforms: Uniforms): THREE.Mesh {
+    const planeMaterial = new THREE.ShaderMaterial({
+      uniforms,
+      vertexShader,
+      fragmentShader,
+    });
+
     return new THREE.Mesh(
       new THREE.SphereGeometry(0.5, 32, 32).rotateX(THREE.Math.degToRad(90)),
-      new THREE.MeshPhongMaterial({
-        map: loader.load(EARTH_IMAGE),
-        bumpMap: loader.load(EARTH_BUMP),
-        bumpScale: 0.01,
-        specularMap: loader.load(EARTH_SPEC),
-        specular: new THREE.Color('grey'),
-      })
+      planeMaterial
     );
   }
 
-  private createClouds(): THREE.Mesh {
-    return new THREE.Mesh(
-      new THREE.SphereGeometry(0.5 + 0.003, 32, 32).rotateX(THREE.Math.degToRad(90)),
-      new THREE.MeshPhongMaterial({
-        map: new THREE.TextureLoader().load(CLOUD_IMAGE),
-        transparent: true,
-      })
-    );
-  }
+  private createMapContext(): CanvasRenderingContext2D {
+    const mapCanvas = document.createElement('canvas');
+    mapCanvas.width = 4096;
+    mapCanvas.height = 2048;
+    const mapContext = mapCanvas.getContext('2d');
+    if (!mapContext) {
+      throw new Error('Map context is empty');
+    }
+    const imageObj = new Image();
 
-  private initStarField(): THREE.Mesh {
-    return new THREE.Mesh(
-      new THREE.SphereGeometry(90, 64, 64).rotateX(THREE.Math.degToRad(90)),
-      new THREE.MeshBasicMaterial({
-        map: new THREE.TextureLoader().load(STAR_IMAGE),
-        side: THREE.BackSide,
-      })
-    );
+    imageObj.onload = (): void => {
+      mapContext.drawImage(imageObj, 0, 0);
+    };
+    imageObj.src = 'INDEXED_MAP_IMAGE';
+
+    return mapContext;
   }
 
   private drag(deltaX: number, deltaY: number): void {
@@ -153,7 +191,7 @@ class Globe {
     if (this.camera.position.length() > MAX_ZOOM) {
       this.camera.position
         .sub(this.center)
-        .multiplyScalar(0.9)
+        .multiplyScalar(0.95)
         .add(this.center);
     }
   }
@@ -162,24 +200,18 @@ class Globe {
     if (this.camera.position.length() < MIN_ZOOM) {
       this.camera.position
         .sub(this.center)
-        .multiplyScalar(1.1)
+        .multiplyScalar(1.05)
         .add(this.center);
     }
   }
 
   public render(): void {
-    const { renderer, globe, scene, camera, clouds, container } = this;
+    const { renderer, globe, scene, camera, container } = this;
     const renderFuncs: RenderFunc[] = [];
 
     renderFuncs.push(
       (delta: number): void => {
-        globe.rotateZ((1 / 32) * delta);
-      }
-    );
-
-    renderFuncs.push(
-      (delta: number): void => {
-        clouds.rotateZ((1 / 24) * delta);
+        //globe.rotateZ((1 / 32) * delta);
       }
     );
 
