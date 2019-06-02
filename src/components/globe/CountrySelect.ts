@@ -19,6 +19,7 @@ class CountrySelect {
   private lookupTexture: THREE.Texture;
   private readonly scene: THREE.Scene;
   private mapUniforms: Uniforms;
+  private colorIndex: number;
 
   public constructor({
     scene,
@@ -34,16 +35,25 @@ class CountrySelect {
     this.lookupContext = lookupContext;
     this.lookupTexture = lookupTexture;
     this.camera = camera;
+    this.colorIndex = 1;
+
+    this.highlightCountry('Australia');
   }
 
   public onCountryClick = (e: MouseEvent): void => {
-    console.log(e);
     e.preventDefault();
     //	make the rest not work if the event was actually a drag style click
     //if (Math.abs(this.pressX - this.mouseX) > 3 || Math.abs(this.pressY - this.mouseY) > 3) return;
-
+    this.highlightCountry();
     let pickColorIndex = this.getPickColor(e);
     console.log(pickColorIndex);
+
+    if (pickColorIndex) {
+      this.colorIndex = pickColorIndex;
+    } else {
+      pickColorIndex = this.colorIndex;
+    }
+
     //	find it
     for (let i in countryColorMap) {
       let countryCode = i;
@@ -55,30 +65,14 @@ class CountrySelect {
         // console.log("converts to " + countryName);
         if (countryName === undefined) return;
 
-        this.selectVisualization([countryName]);
+        this.highlightCountry(countryName);
         // console.log('selecting ' + countryName + ' from click');
         return;
       }
     }
   };
 
-  private selectVisualization(countries: string[]): void {
-    let cName = countries[0].toUpperCase();
-
-    //	build the mesh
-    console.time('getVisualizedMesh');
-    const affectedCountries: string[] = [];
-    console.timeEnd('getVisualizedMesh');
-
-    affectedCountries.push(cName);
-
-    console.log(affectedCountries);
-
-    this.highlightCountry(affectedCountries);
-  }
-
   private getPickColor(e: MouseEvent): number {
-    this.highlightCountry([]);
     this.mapUniforms['outlineLevel'].value = 0;
 
     this.renderer.clear();
@@ -98,29 +92,21 @@ class CountrySelect {
     return buf[0];
   }
 
-  private highlightCountry(countries: string[]): void {
-    let countryCodes = [];
-    for (let i in countries) {
-      let code = CountrySelect.findCode(countries[i]);
-      countryCodes.push(code);
-    }
+  private cleanupContext(): void {
+    this.lookupContext.clearRect(0, 0, 256, 1);
+  }
 
-    let ctx = this.lookupContext;
-    ctx.clearRect(0, 0, 256, 1);
+  private highlightCountry(country?: string): void {
+    this.cleanupContext();
 
-    //	color index 0 is the ocean, leave it something neutral
+    if (country) {
+      let countryCode = CountrySelect.findCode(country);
 
-    //	this fixes a bug where the fill for ocean was being applied during pick
-    //	all non-countries were being pointed to 10 - bolivia
-    //	the fact that it didn't select was because bolivia shows up as an invalid country due to country name mismatch
-    //	...
-    let pickMask = countries.length === 0 ? 0 : 1;
-    let oceanFill = 10 * pickMask;
-    ctx.fillStyle = 'rgb(' + oceanFill + ',' + oceanFill + ',' + oceanFill + ')';
-    ctx.fillRect(0, 0, 1, 1);
+      let ctx = this.lookupContext;
 
-    for (const i in countryCodes) {
-      let countryCode = countryCodes[i];
+      ctx.fillStyle = 'rgb(10,10,10)';
+      ctx.fillRect(0, 0, 1, 1);
+
       let colorIndex = countryColorMap[countryCode];
 
       ctx.fillStyle = '#eeeeee';
