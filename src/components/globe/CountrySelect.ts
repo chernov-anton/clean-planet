@@ -17,7 +17,7 @@ class CountrySelect {
   private readonly lookupContext: CanvasRenderingContext2D;
   private readonly camera: THREE.PerspectiveCamera;
   private lookupTexture: THREE.Texture;
-  private scene: THREE.Scene;
+  private readonly scene: THREE.Scene;
   private mapUniforms: Uniforms;
 
   public constructor({
@@ -85,24 +85,20 @@ class CountrySelect {
     this.renderer.render(this.scene, this.camera);
 
     let gl = this.renderer.context;
-    console.log(gl);
+    let canvas = gl.canvas;
 
-    let mouseX = e.clientX - window.innerWidth * 0.5;
-    let mouseY = e.clientY - window.innerHeight * 0.5;
-    let mx = mouseX + this.renderer.context.canvas.width / 2;
-    let my = -mouseY + this.renderer.context.canvas.height / 2;
-    mx = Math.floor(mx);
-    my = Math.floor(my);
+    let mouseX = e.clientX - canvas.offsetLeft;
+    let mouseY = -e.clientY + canvas.height + canvas.offsetTop;
 
     let buf = new Uint8Array(4);
-    gl.readPixels(mx, my, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    gl.readPixels(mouseX, mouseY, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
 
     this.mapUniforms['outlineLevel'].value = 1;
 
     return buf[0];
   }
 
-  private highlightCountry(countries: string[]) {
+  private highlightCountry(countries: string[]): void {
     let countryCodes = [];
     for (let i in countries) {
       let code = CountrySelect.findCode(countries[i]);
