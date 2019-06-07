@@ -1,4 +1,4 @@
-interface Drag {
+interface MouseButtonListener {
   (x: number, y: number): void;
 }
 
@@ -11,22 +11,31 @@ type Coordinate = number | null;
 class Controls {
   private startDragX: Coordinate;
   private startDragY: Coordinate;
-  private drag: Drag;
+  private drag: MouseButtonListener;
+  private click: MouseButtonListener;
   private zoomIn: Zoom;
   private zoomOut: Zoom;
 
-  public constructor(domObject: HTMLElement, drag: Drag, zoomIn: Zoom, zoomOut: Zoom) {
+  public constructor(
+    domObject: HTMLElement,
+    drag: MouseButtonListener,
+    click: MouseButtonListener,
+    zoomIn: Zoom,
+    zoomOut: Zoom
+  ) {
     this.startDragX = null;
     this.startDragY = null;
     this.drag = drag;
     this.zoomIn = zoomIn;
     this.zoomOut = zoomOut;
+    this.click = click;
 
-    domObject.addEventListener('wheel', this.mouseWheelHandler);
-    domObject.addEventListener('wheel', this.mouseWheelHandler);
-    domObject.addEventListener('mousedown', this.mouseDownHandler);
-    domObject.addEventListener('mousemove', this.mouseMoveHandler);
-    domObject.addEventListener('mouseup', this.mouseUpHandler);
+    domObject.addEventListener('wheel', this.mouseWheelHandler.bind(this));
+    domObject.addEventListener('wheel', this.mouseWheelHandler.bind(this));
+    domObject.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+    domObject.addEventListener('mousemove', this.mouseMoveHandler.bind(this));
+    domObject.addEventListener('mouseup', this.mouseUpHandler.bind(this));
+    domObject.addEventListener('click', this.clickHandler.bind(this));
   }
 
   private mouseWheelHandler = (e: WheelEvent): void => {
@@ -59,6 +68,19 @@ class Controls {
   private mouseUpHandler = (e: MouseEvent): void => {
     e.preventDefault();
     this.mouseMoveHandler(e);
+    this.startDragX = null;
+    this.startDragY = null;
+  };
+  private clickHandler = (e: MouseEvent): void => {
+    e.preventDefault();
+    debugger;
+
+    /* if (this.startDragX === null || this.startDragY === null) return;
+    if (Math.abs(this.startDragX - e.clientX) > 3 || Math.abs(this.startDragY - e.clientY) > 3)
+      return;*/
+
+    if (this.click) this.click(e.clientX, e.clientY);
+
     this.startDragX = null;
     this.startDragY = null;
   };

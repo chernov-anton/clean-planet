@@ -18,7 +18,7 @@ const MIN_ZOOM = 4;
 
 class Globe {
   private container: HTMLElement;
-  private controls: Controls;
+  private controls?: Controls;
   private readonly renderer: THREE.WebGLRenderer;
   private readonly scene: THREE.Scene;
   private lookupContext?: CanvasRenderingContext2D;
@@ -46,13 +46,6 @@ class Globe {
 
     this.mapContext = this.createMapContext();
 
-    this.controls = new Controls(
-      container,
-      this.drag.bind(this),
-      this.zoomIn.bind(this),
-      this.zoomOut.bind(this)
-    );
-
     if (this.lookupTexture && this.lookupContext) {
       const select = new CountrySelect({
         scene: this.scene,
@@ -63,7 +56,13 @@ class Globe {
         camera: this.camera,
       });
 
-      container.addEventListener('click', select.onCountryClick);
+      this.controls = new Controls(
+        container,
+        this.drag.bind(this),
+        select.onCountryClick,
+        this.zoomIn.bind(this),
+        this.zoomOut.bind(this)
+      );
     }
   }
 
