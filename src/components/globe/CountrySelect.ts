@@ -1,7 +1,8 @@
 import countryColorMap from './countryColorMap';
-import countryLookup from './country_iso3166.json';
+// import countryLookup from './country_iso3166.json';
 import * as THREE from 'three';
 import { Uniforms } from './types';
+import findKey from 'lodash/findKey';
 
 interface CountrySelectParams {
   scene: THREE.Scene;
@@ -35,18 +36,14 @@ class CountrySelect {
     this.lookupContext = lookupContext;
     this.lookupTexture = lookupTexture;
     this.camera = camera;
-    this.colorIndex = 1;
+    this.colorIndex = 0;
 
-    this.highlightCountry('Australia');
+    this.highlightOcean();
   }
 
-  public onCountryClick = (e: MouseEvent): void => {
-    e.preventDefault();
-    //	make the rest not work if the event was actually a drag style click
-    //if (Math.abs(this.pressX - this.mouseX) > 3 || Math.abs(this.pressY - this.mouseY) > 3) return;
-    this.highlightCountry();
-    let pickColorIndex = this.getPickColor(e);
-    console.log(pickColorIndex);
+  public onCountryClick = (x: number, y: number): void => {
+    this.cleanupContext();
+    let pickColorIndex = this.getPickColor(x, y);
 
     if (pickColorIndex) {
       this.colorIndex = pickColorIndex;
@@ -54,25 +51,20 @@ class CountrySelect {
       pickColorIndex = this.colorIndex;
     }
 
-    //	find it
-    for (let i in countryColorMap) {
-      let countryCode = i;
-      let countryColorIndex = countryColorMap[i];
-      if (pickColorIndex === countryColorIndex) {
-        // console.log("selecting code " + countryCode);
-        // @ts-ignore
-        let countryName = countryLookup[countryCode];
-        // console.log("converts to " + countryName);
-        if (countryName === undefined) return;
+    const countryCode = findKey(
+      countryColorMap,
+      (countryColorIndex): boolean => countryColorIndex === pickColorIndex
+    );
 
-        this.highlightCountry(countryName);
-        // console.log('selecting ' + countryName + ' from click');
-        return;
-      }
+    //	find it
+
+    if (countryCode) {
+      this.highlightCountry(countryCode);
+      this.highlightOcean();
     }
   };
 
-  private getPickColor(e: MouseEvent): number {
+  private getPickColor(x: number, y: number): number {
     this.mapUniforms['outlineLevel'].value = 0;
 
     this.renderer.clear();
@@ -81,8 +73,8 @@ class CountrySelect {
     let gl = this.renderer.context;
     let canvas = gl.canvas;
 
-    let mouseX = e.clientX - canvas.offsetLeft;
-    let mouseY = -e.clientY + canvas.height + canvas.offsetTop;
+    let mouseX = x - canvas.offsetLeft;
+    let mouseY = -y + canvas.height + canvas.offsetTop;
 
     let buf = new Uint8Array(4);
     gl.readPixels(mouseX, mouseY, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
@@ -94,36 +86,29 @@ class CountrySelect {
 
   private cleanupContext(): void {
     this.lookupContext.clearRect(0, 0, 256, 1);
+    this.lookupTexture.needsUpdate = true;
   }
 
-  private highlightCountry(country?: string): void {
+  private highlightOcean(): void {
+    let ctx = this.lookupContext;
+    ctx.fillStyle = 'rgb(10,10,10)';
+    ctx.fillRect(0, 0, 1, 1);
+    this.lookupTexture.needsUpdate = true;
+  }
+
+  private highlightCountry(countryCode?: string): void {
     this.cleanupContext();
 
-    if (country) {
-      let countryCode = CountrySelect.findCode(country);
+    if (countryCode) {
+      let colorIndex = countryColorMap[countryCode];
 
       let ctx = this.lookupContext;
-
-      ctx.fillStyle = 'rgb(10,10,10)';
-      ctx.fillRect(0, 0, 1, 1);
-
-      let colorIndex = countryColorMap[countryCode];
 
       ctx.fillStyle = '#eeeeee';
       ctx.fillRect(colorIndex, 0, 1, 1);
     }
 
     this.lookupTexture.needsUpdate = true;
-  }
-
-  private static findCode(countryName: string): string {
-    countryName = countryName.toUpperCase();
-    for (let i in countryLookup) {
-      if (countryLookup[i as keyof typeof countryLookup] === countryName) {
-        return i;
-      }
-    }
-    throw new Error('not found');
   }
 }
 
