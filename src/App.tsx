@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, ReactElement, RefObject } from 'react';
 import style from './app.module.css';
-import Globe from './components/globe/Globe';
+import Globe from './components/globe';
 
 function useGlobe(): RefObject<HTMLElement> {
   const threeContainer = useRef<HTMLElement>(null);
