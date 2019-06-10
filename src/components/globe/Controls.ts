@@ -9,12 +9,14 @@ interface Zoom {
 type Coordinate = number | null;
 
 class Controls {
-  private startDragX: Coordinate;
-  private startDragY: Coordinate;
-  private drag: MouseButtonListener;
-  private click: MouseButtonListener;
-  private zoomIn: Zoom;
-  private zoomOut: Zoom;
+  private startX: Coordinate;
+  private startY: Coordinate;
+  private currentX: Coordinate;
+  private currentY: Coordinate;
+  private readonly drag: MouseButtonListener;
+  private readonly click: MouseButtonListener;
+  private readonly zoomIn: Zoom;
+  private readonly zoomOut: Zoom;
 
   public constructor(
     domObject: HTMLElement,
@@ -23,8 +25,10 @@ class Controls {
     zoomIn: Zoom,
     zoomOut: Zoom
   ) {
-    this.startDragX = null;
-    this.startDragY = null;
+    this.startX = null;
+    this.startY = null;
+    this.currentX = null;
+    this.currentY = null;
     this.drag = drag;
     this.zoomIn = zoomIn;
     this.zoomOut = zoomOut;
@@ -51,38 +55,42 @@ class Controls {
 
   private mouseDownHandler = (e: MouseEvent): void => {
     e.preventDefault();
-    this.startDragX = e.clientX;
-    this.startDragY = e.clientY;
+    this.startX = e.clientX;
+    this.startY = e.clientY;
+    this.currentX = e.clientX;
+    this.currentY = e.clientY;
   };
 
   private mouseMoveHandler = (e: MouseEvent): void => {
     e.preventDefault();
-    if (this.startDragX === null || this.startDragY === null) return;
 
-    if (this.drag) this.drag(e.clientX - this.startDragX, e.clientY - this.startDragY);
+    if (this.currentX === null || this.currentY === null) return;
 
-    this.startDragX = e.clientX;
-    this.startDragY = e.clientY;
+    if (this.drag) this.drag(e.clientX - this.currentX, e.clientY - this.currentY);
+
+    this.currentX = e.clientX;
+    this.currentY = e.clientY;
   };
 
   private mouseUpHandler = (e: MouseEvent): void => {
     e.preventDefault();
     this.mouseMoveHandler(e);
-    this.startDragX = null;
-    this.startDragY = null;
+
+    this.currentX = null;
+    this.currentY = null;
   };
+
   private clickHandler = (e: MouseEvent): void => {
     e.preventDefault();
     debugger;
 
-    /* if (this.startDragX === null || this.startDragY === null) return;
-    if (Math.abs(this.startDragX - e.clientX) > 3 || Math.abs(this.startDragY - e.clientY) > 3)
-      return;*/
+    if (this.startX === null || this.startY === null) return;
+    if (Math.abs(this.startX - e.clientX) > 3 || Math.abs(this.startY - e.clientY) > 3) return;
 
     if (this.click) this.click(e.clientX, e.clientY);
 
-    this.startDragX = null;
-    this.startDragY = null;
+    this.startX = null;
+    this.startY = null;
   };
 }
 
