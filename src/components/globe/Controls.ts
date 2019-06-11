@@ -82,7 +82,6 @@ class Controls {
 
   private clickHandler = (e: MouseEvent): void => {
     e.preventDefault();
-    debugger;
 
     if (this.startX === null || this.startY === null) return;
     if (Math.abs(this.startX - e.clientX) > 3 || Math.abs(this.startY - e.clientY) > 3) return;

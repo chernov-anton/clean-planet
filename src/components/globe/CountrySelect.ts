@@ -1,5 +1,4 @@
 import countryColorMap from './countryColorMap';
-// import countryLookup from './country_iso3166.json';
 import * as THREE from 'three';
 import { Uniforms } from './types';
 import findKey from 'lodash/findKey';
@@ -43,20 +42,19 @@ class CountrySelect {
 
   public onCountryClick = (x: number, y: number): void => {
     this.cleanupContext();
-    let pickColorIndex = this.getPickColor(x, y);
+    let pickedColorIndex = this.getPickColor(x, y);
 
-    if (pickColorIndex) {
-      this.colorIndex = pickColorIndex;
+    if (pickedColorIndex) {
+      this.colorIndex = pickedColorIndex;
     } else {
-      pickColorIndex = this.colorIndex;
+      // if !pickedColorIndex then user clicked on ocean and we shouldn change selected country
+      pickedColorIndex = this.colorIndex;
     }
 
     const countryCode = findKey(
       countryColorMap,
-      (countryColorIndex): boolean => countryColorIndex === pickColorIndex
+      (countryColorIndex): boolean => countryColorIndex === pickedColorIndex
     );
-
-    //	find it
 
     if (countryCode) {
       this.highlightCountry(countryCode);
