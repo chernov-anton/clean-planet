@@ -1,13 +1,13 @@
 {
-  "main.css": "/static/css/main.55e06200.chunk.css",
-  "main.js": "/static/js/main.e0d73495.chunk.js",
-  "main.js.map": "/static/js/main.e0d73495.chunk.js.map",
-  "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
-  "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
-  "static/js/2.8ef4ec94.chunk.js": "/static/js/2.8ef4ec94.chunk.js",
-  "static/js/2.8ef4ec94.chunk.js.map": "/static/js/2.8ef4ec94.chunk.js.map",
-  "index.html": "/index.html",
-  "precache-manifest.0d08387676f8315d1b0cb9f64141472b.js": "/precache-manifest.0d08387676f8315d1b0cb9f64141472b.js",
-  "service-worker.js": "/service-worker.js",
-  "static/css/main.55e06200.chunk.css.map": "/static/css/main.55e06200.chunk.css.map"
+  "main.css": "/clean-planet-front/static/css/main.55e06200.chunk.css",
+  "main.js": "/clean-planet-front/static/js/main.54e43784.chunk.js",
+  "main.js.map": "/clean-planet-front/static/js/main.54e43784.chunk.js.map",
+  "runtime~main.js": "/clean-planet-front/static/js/runtime~main.0f2b2e61.js",
+  "runtime~main.js.map": "/clean-planet-front/static/js/runtime~main.0f2b2e61.js.map",
+  "static/js/2.8ef4ec94.chunk.js": "/clean-planet-front/static/js/2.8ef4ec94.chunk.js",
+  "static/js/2.8ef4ec94.chunk.js.map": "/clean-planet-front/static/js/2.8ef4ec94.chunk.js.map",
+  "index.html": "/clean-planet-front/index.html",
+  "precache-manifest.1ed88dfbedd438f6e4e68e32768e5a97.js": "/clean-planet-front/precache-manifest.1ed88dfbedd438f6e4e68e32768e5a97.js",
+  "service-worker.js": "/clean-planet-front/service-worker.js",
+  "static/css/main.55e06200.chunk.css.map": "/clean-planet-front/static/css/main.55e06200.chunk.css.map"
 }
