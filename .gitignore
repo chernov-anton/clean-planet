@@ -29,4 +29,6 @@ yarn-error.log*
 #build
 .env.local
 tmp
+build-for-gh
 deploy
+
