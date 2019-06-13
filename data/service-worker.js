@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/clean-planet/globe/precache-manifest.bc5dc40e520a6dd74d94dc6e96da2be1.js"
+  "/clean-planet/data/precache-manifest.59b38f6fa88a94f8c11e88baa3e5876f.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/clean-planet/globe/index.html", {
+workbox.routing.registerNavigationRoute("/clean-planet/data/index.html", {
   
   blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
 });
