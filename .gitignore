@@ -25,5 +25,5 @@ yarn-error.log*
 
 #build
 .env.local
-tmp
-deploy
+/tmp
+/deploy/*
