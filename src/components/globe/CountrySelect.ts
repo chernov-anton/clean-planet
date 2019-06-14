@@ -46,9 +46,12 @@ class CountrySelect {
 
     if (pickedColorIndex) {
       this.colorIndex = pickedColorIndex;
-    } else {
-      // if !pickedColorIndex then user clicked on ocean and we shouldn change selected country
+    } else if (this.colorIndex) {
+      // if !pickedColorIndex then user clicked on ocean and we shouldn't change selected country
       pickedColorIndex = this.colorIndex;
+    } else {
+      this.highlightOcean();
+      return;
     }
 
     const countryCode = findKey(
