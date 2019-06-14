@@ -1,6 +1,6 @@
 import countryColorMap from './countryColorMap';
 import * as THREE from 'three';
-import { Uniforms } from './types';
+import { Uniforms } from '../types';
 import findKey from 'lodash/findKey';
 
 interface CountrySelectParams {

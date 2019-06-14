@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import Controls from './Controls';
-import CountrySelect from './CountrySelect';
+import Controls from './controls';
+import CountrySelect from './country-select';
 
 /* eslint import/no-webpack-loader-syntax: off */
-import fragmentShader from '!raw-loader!glslify-loader!./fragment.glsl';
+import fragmentShader from '!raw-loader!glslify-loader!./shaders/fragment.glsl';
 /* eslint import/no-webpack-loader-syntax: off */
-import vertexShader from '!raw-loader!glslify-loader!./vertex.glsl';
+import vertexShader from '!raw-loader!glslify-loader!./shaders/vertex.glsl';
 import { Uniforms } from './types';
 
 type RenderFunc = (delta: number, now: number) => void;
