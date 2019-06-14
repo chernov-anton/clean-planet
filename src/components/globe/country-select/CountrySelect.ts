@@ -19,7 +19,7 @@ class CountrySelect {
   private lookupTexture: THREE.Texture;
   private readonly scene: THREE.Scene;
   private mapUniforms: Uniforms;
-  private colorIndex: number;
+  private previousColorIndex: number;
 
   public constructor({
     scene,
@@ -35,47 +35,50 @@ class CountrySelect {
     this.lookupContext = lookupContext;
     this.lookupTexture = lookupTexture;
     this.camera = camera;
-    this.colorIndex = 0;
+    this.previousColorIndex = 0;
 
     this.highlightOcean();
   }
 
   public onCountryClick = (x: number, y: number): void => {
     this.cleanupContext();
-    let pickedColorIndex = this.getPickColor(x, y);
+
+    const { mouseX, mouseY } = this.getMouseCoordinates(x, y);
+    const pickedColorIndex = this.getPickColor(mouseX, mouseY) || this.previousColorIndex;
 
     if (pickedColorIndex) {
-      this.colorIndex = pickedColorIndex;
-    } else if (this.colorIndex) {
-      // if !pickedColorIndex then user clicked on ocean and we shouldn't change selected country
-      pickedColorIndex = this.colorIndex;
-    } else {
-      this.highlightOcean();
-      return;
+      // save color index for the click on ocean
+      this.previousColorIndex = pickedColorIndex;
+
+      const countryCode = findKey(
+        countryColorMap,
+        (countryColorIndex): boolean => countryColorIndex === pickedColorIndex
+      );
+
+      if (countryCode) {
+        this.highlightCountry(countryCode);
+      }
     }
 
-    const countryCode = findKey(
-      countryColorMap,
-      (countryColorIndex): boolean => countryColorIndex === pickedColorIndex
-    );
-
-    if (countryCode) {
-      this.highlightCountry(countryCode);
-      this.highlightOcean();
-    }
+    this.highlightOcean();
   };
 
-  private getPickColor(x: number, y: number): number {
+  private getMouseCoordinates(x: number, y: number): { mouseX: number; mouseY: number } {
+    let canvas = this.renderer.context.canvas;
+
+    let mouseX = x - canvas.offsetLeft;
+    let mouseY = -y + canvas.height + canvas.offsetTop;
+
+    return { mouseX, mouseY };
+  }
+
+  private getPickColor(mouseX: number, mouseY: number): number {
     this.mapUniforms['outlineLevel'].value = 0;
 
     this.renderer.clear();
     this.renderer.render(this.scene, this.camera);
 
     let gl = this.renderer.context;
-    let canvas = gl.canvas;
-
-    let mouseX = x - canvas.offsetLeft;
-    let mouseY = -y + canvas.height + canvas.offsetTop;
 
     let buf = new Uint8Array(4);
     gl.readPixels(mouseX, mouseY, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
