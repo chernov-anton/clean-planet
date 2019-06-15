@@ -8,6 +8,8 @@ interface Zoom {
 
 type Coordinate = number | null;
 
+type ControlEvent = MouseEvent | TouchEvent;
+
 class Controls {
   private startX: Coordinate;
   private startY: Coordinate;
@@ -34,12 +36,16 @@ class Controls {
     this.zoomOut = zoomOut;
     this.click = click;
 
-    domObject.addEventListener('wheel', this.mouseWheelHandler.bind(this));
-    domObject.addEventListener('wheel', this.mouseWheelHandler.bind(this));
-    domObject.addEventListener('mousedown', this.mouseDownHandler.bind(this));
-    domObject.addEventListener('mousemove', this.mouseMoveHandler.bind(this));
-    domObject.addEventListener('mouseup', this.mouseUpHandler.bind(this));
-    domObject.addEventListener('click', this.clickHandler.bind(this));
+    domObject.addEventListener('wheel', this.mouseWheelHandler);
+    domObject.addEventListener('wheel', this.mouseWheelHandler);
+
+    domObject.addEventListener('mousedown', this.downHandler);
+    domObject.addEventListener('mousemove', this.moveHandler);
+    domObject.addEventListener('mouseup', this.endHandler);
+
+    domObject.addEventListener('touchstart', this.downHandler);
+    domObject.addEventListener('touchmove', this.moveHandler);
+    domObject.addEventListener('touchend', this.endHandler);
   }
 
   private mouseWheelHandler = (e: WheelEvent): void => {
@@ -53,43 +59,58 @@ class Controls {
     }
   };
 
-  private mouseDownHandler = (e: MouseEvent): void => {
-    e.preventDefault();
-    this.startX = e.clientX;
-    this.startY = e.clientY;
-    this.currentX = e.clientX;
-    this.currentY = e.clientY;
+  private getCoordinates = (e: ControlEvent): { x: number; y: number } => {
+    if (e instanceof MouseEvent) {
+      return { x: e.clientX, y: e.clientY };
+    }
+
+    return { x: e.touches[0].pageX, y: e.touches[0].pageY };
   };
 
-  private mouseMoveHandler = (e: MouseEvent): void => {
+  private downHandler = (e: ControlEvent): void => {
     e.preventDefault();
+
+    const { x, y } = this.getCoordinates(e);
+    this.startX = x;
+    this.startY = y;
+    this.currentX = x;
+    this.currentY = y;
+  };
+
+  private moveHandler = (e: ControlEvent): void => {
+    e.preventDefault();
+
+    const { x, y } = this.getCoordinates(e);
 
     if (this.currentX === null || this.currentY === null) return;
 
-    if (this.drag) this.drag(e.clientX - this.currentX, e.clientY - this.currentY);
+    if (this.drag) {
+      this.drag(x - this.currentX, y - this.currentY);
+    }
 
-    this.currentX = e.clientX;
-    this.currentY = e.clientY;
+    this.currentX = x;
+    this.currentY = y;
   };
 
-  private mouseUpHandler = (e: MouseEvent): void => {
-    e.preventDefault();
-    this.mouseMoveHandler(e);
-
-    this.currentX = null;
-    this.currentY = null;
-  };
-
-  private clickHandler = (e: MouseEvent): void => {
+  private endHandler = (e: ControlEvent): void => {
     e.preventDefault();
 
-    if (this.startX === null || this.startY === null) return;
-    if (Math.abs(this.startX - e.clientX) > 3 || Math.abs(this.startY - e.clientY) > 3) return;
-
-    if (this.click) this.click(e.clientX, e.clientY);
+    // TODO refactor
+    if (
+      this.currentX !== null &&
+      this.currentY !== null &&
+      this.startX !== null &&
+      this.startY !== null &&
+      Math.abs(this.startX - this.currentX) < 3 &&
+      Math.abs(this.startY - this.currentY) < 3
+    ) {
+      if (this.click) this.click(this.currentX, this.currentY);
+    }
 
     this.startX = null;
     this.startY = null;
+    this.currentX = null;
+    this.currentY = null;
   };
 }
 
