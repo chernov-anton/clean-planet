@@ -6,15 +6,18 @@ interface Zoom {
   (): void;
 }
 
-type Coordinate = number | null;
+type Coordinate = number;
+interface Coordinates {
+  startX: Coordinate;
+  startY: Coordinate;
+  currentX: Coordinate;
+  currentY: Coordinate;
+}
 
-type ControlEvent = MouseEvent | TouchEvent;
+type CoordinateEvent = MouseEvent | TouchEvent;
 
 class Controls {
-  private startX: Coordinate;
-  private startY: Coordinate;
-  private currentX: Coordinate;
-  private currentY: Coordinate;
+  private coordinates: Coordinates | null;
   private readonly drag: MouseButtonListener;
   private readonly click: MouseButtonListener;
   private readonly zoomIn: Zoom;
@@ -27,10 +30,7 @@ class Controls {
     zoomIn: Zoom,
     zoomOut: Zoom
   ) {
-    this.startX = null;
-    this.startY = null;
-    this.currentX = null;
-    this.currentY = null;
+    this.coordinates = null;
     this.drag = drag;
     this.zoomIn = zoomIn;
     this.zoomOut = zoomOut;
@@ -59,7 +59,7 @@ class Controls {
     }
   };
 
-  private getCoordinates = (e: ControlEvent): { x: number; y: number } => {
+  private getCoordinates = (e: CoordinateEvent): { x: number; y: number } => {
     if (e instanceof MouseEvent) {
       return { x: e.clientX, y: e.clientY };
     }
@@ -67,51 +67,53 @@ class Controls {
     return { x: e.touches[0].pageX, y: e.touches[0].pageY };
   };
 
-  private downHandler = (e: ControlEvent): void => {
+  private downHandler = (e: CoordinateEvent): void => {
     e.preventDefault();
 
     const { x, y } = this.getCoordinates(e);
-    this.startX = x;
-    this.startY = y;
-    this.currentX = x;
-    this.currentY = y;
+
+    this.coordinates = {
+      startX: x,
+      startY: y,
+      currentX: x,
+      currentY: y,
+    };
   };
 
-  private moveHandler = (e: ControlEvent): void => {
+  private moveHandler = (e: CoordinateEvent): void => {
     e.preventDefault();
 
     const { x, y } = this.getCoordinates(e);
 
-    if (this.currentX === null || this.currentY === null) return;
+    if (!this.isInteractionStarted(this.coordinates)) return;
 
     if (this.drag) {
-      this.drag(x - this.currentX, y - this.currentY);
+      this.drag(x - this.coordinates.currentX, y - this.coordinates.currentY);
     }
 
-    this.currentX = x;
-    this.currentY = y;
+    this.coordinates.currentX = x;
+    this.coordinates.currentY = y;
   };
 
-  private endHandler = (e: ControlEvent): void => {
+  private endHandler = (e: CoordinateEvent): void => {
     e.preventDefault();
 
-    // TODO refactor
-    if (
-      this.currentX !== null &&
-      this.currentY !== null &&
-      this.startX !== null &&
-      this.startY !== null &&
-      Math.abs(this.startX - this.currentX) < 3 &&
-      Math.abs(this.startY - this.currentY) < 3
-    ) {
-      if (this.click) this.click(this.currentX, this.currentY);
+    if (this.isClicked(this.coordinates)) {
+      if (this.click) this.click(this.coordinates.currentX, this.coordinates.currentY);
     }
 
-    this.startX = null;
-    this.startY = null;
-    this.currentX = null;
-    this.currentY = null;
+    this.coordinates = null;
   };
+
+  private isClicked = (coordinates: Coordinates | null): coordinates is Coordinates =>
+    this.isInteractionStarted(coordinates) && !this.isDrag(coordinates) && !!this.click;
+
+  private isInteractionStarted = (coordinates: Coordinates | null): coordinates is Coordinates =>
+    !!coordinates;
+
+  private isDrag = (coordinates: Coordinates): boolean =>
+    Math.abs(coordinates.startX - coordinates.currentX) > 3 ||
+    Math.abs(coordinates.startY - coordinates.currentY) > 3;
 }
 
 export default Controls;
