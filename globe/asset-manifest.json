@@ -1,13 +1,15 @@
 {
-  "main.css": "/clean-planet/globe/static/css/main.55f93df9.chunk.css",
-  "main.js": "/clean-planet/globe/static/js/main.a3e33df7.chunk.js",
-  "main.js.map": "/clean-planet/globe/static/js/main.a3e33df7.chunk.js.map",
-  "runtime~main.js": "/clean-planet/globe/static/js/runtime~main.bc32a245.js",
-  "runtime~main.js.map": "/clean-planet/globe/static/js/runtime~main.bc32a245.js.map",
-  "static/js/2.59e1b307.chunk.js": "/clean-planet/globe/static/js/2.59e1b307.chunk.js",
-  "static/js/2.59e1b307.chunk.js.map": "/clean-planet/globe/static/js/2.59e1b307.chunk.js.map",
-  "index.html": "/clean-planet/globe/index.html",
-  "precache-manifest.bc5dc40e520a6dd74d94dc6e96da2be1.js": "/clean-planet/globe/precache-manifest.bc5dc40e520a6dd74d94dc6e96da2be1.js",
-  "service-worker.js": "/clean-planet/globe/service-worker.js",
-  "static/css/main.55f93df9.chunk.css.map": "/clean-planet/globe/static/css/main.55f93df9.chunk.css.map"
+  "files": {
+    "main.css": "/clean-planet/globe/static/css/main.ee49a795.chunk.css",
+    "main.js": "/clean-planet/globe/static/js/main.445e62e1.chunk.js",
+    "main.js.map": "/clean-planet/globe/static/js/main.445e62e1.chunk.js.map",
+    "runtime~main.js": "/clean-planet/globe/static/js/runtime~main.bc32a245.js",
+    "runtime~main.js.map": "/clean-planet/globe/static/js/runtime~main.bc32a245.js.map",
+    "static/js/2.c0b3312f.chunk.js": "/clean-planet/globe/static/js/2.c0b3312f.chunk.js",
+    "static/js/2.c0b3312f.chunk.js.map": "/clean-planet/globe/static/js/2.c0b3312f.chunk.js.map",
+    "index.html": "/clean-planet/globe/index.html",
+    "precache-manifest.9b8c66af54ee5b3e597b72bb652a5051.js": "/clean-planet/globe/precache-manifest.9b8c66af54ee5b3e597b72bb652a5051.js",
+    "service-worker.js": "/clean-planet/globe/service-worker.js",
+    "static/css/main.ee49a795.chunk.css.map": "/clean-planet/globe/static/css/main.ee49a795.chunk.css.map"
+  }
 }
