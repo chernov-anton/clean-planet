@@ -1,4 +1,6 @@
-interface Drag {
+import get from 'lodash/get';
+
+interface MouseButtonListener {
   (x: number, y: number): void;
 }
 
@@ -6,28 +8,85 @@ interface Zoom {
   (): void;
 }
 
-type Coordinate = number | null;
+type Coordinate = number;
+
+interface Coordinates {
+  startX: Coordinate;
+  startY: Coordinate;
+  currentX: Coordinate;
+  currentY: Coordinate;
+}
+
+type CoordinateEvent = MouseEvent | TouchEvent;
 
 class Controls {
-  private startDragX: Coordinate;
-  private startDragY: Coordinate;
-  private drag: Drag;
-  private zoomIn: Zoom;
-  private zoomOut: Zoom;
+  private coordinates: Coordinates | null;
+  private touchZoomDistance: number;
+  private readonly drag: MouseButtonListener;
+  private readonly zoomIn: Zoom;
+  private readonly zoomOut: Zoom;
 
-  public constructor(domObject: HTMLElement, drag: Drag, zoomIn: Zoom, zoomOut: Zoom) {
-    this.startDragX = null;
-    this.startDragY = null;
+  public constructor(
+    domObject: HTMLElement,
+    drag: MouseButtonListener,
+    zoomIn: Zoom,
+    zoomOut: Zoom
+  ) {
+    this.coordinates = null;
+    this.touchZoomDistance = 0;
     this.drag = drag;
     this.zoomIn = zoomIn;
     this.zoomOut = zoomOut;
 
     domObject.addEventListener('wheel', this.mouseWheelHandler);
-    domObject.addEventListener('wheel', this.mouseWheelHandler);
-    domObject.addEventListener('mousedown', this.mouseDownHandler);
-    domObject.addEventListener('mousemove', this.mouseMoveHandler);
-    domObject.addEventListener('mouseup', this.mouseUpHandler);
+
+    domObject.addEventListener('mousedown', this.downHandler);
+    domObject.addEventListener('mousemove', this.moveHandler);
+    domObject.addEventListener('mouseup', this.endHandler);
+
+    domObject.addEventListener('touchstart', this.downHandler);
+    domObject.addEventListener('touchmove', this.moveHandler);
+    domObject.addEventListener('touchend', this.endHandler);
+
+    domObject.addEventListener('touchstart', this.zoomStartHandler);
+    domObject.addEventListener('touchmove', this.zoomMoveHandler);
   }
+
+  private zoomStartHandler = (e: TouchEvent): void => {
+    if (!this.isTwoTouches(e)) {
+      return;
+    }
+
+    e.preventDefault();
+    this.touchZoomDistance = Math.hypot(
+      e.touches[0].pageX - e.touches[1].pageX,
+      e.touches[0].pageY - e.touches[1].pageY
+    );
+  };
+
+  private zoomMoveHandler = (e: TouchEvent): void => {
+    if (!this.isTwoTouches(e)) {
+      return;
+    }
+
+    e.preventDefault();
+    const newDistance = Math.hypot(
+      e.touches[0].pageX - e.touches[1].pageX,
+      e.touches[0].pageY - e.touches[1].pageY
+    );
+
+    const delta = newDistance - this.touchZoomDistance;
+    console.log(delta);
+    if (Math.abs(delta) > 10) {
+      if (delta < 0) {
+        this.zoomOut();
+      } else {
+        this.zoomIn();
+      }
+
+      this.touchZoomDistance = newDistance;
+    }
+  };
 
   private mouseWheelHandler = (e: WheelEvent): void => {
     e.preventDefault();
@@ -40,27 +99,62 @@ class Controls {
     }
   };
 
-  private mouseDownHandler = (e: MouseEvent): void => {
-    e.preventDefault();
-    this.startDragX = e.clientX;
-    this.startDragY = e.clientY;
+  private getCoordinates = (e: CoordinateEvent): { x: number; y: number } => {
+    if (e instanceof MouseEvent) {
+      return { x: e.clientX, y: e.clientY };
+    }
+
+    return { x: e.touches[0].pageX, y: e.touches[0].pageY };
   };
 
-  private mouseMoveHandler = (e: MouseEvent): void => {
+  private downHandler = (e: CoordinateEvent): void => {
+    if (this.isTwoTouches(e)) {
+      return;
+    }
+
     e.preventDefault();
-    if (this.startDragX === null || this.startDragY === null) return;
 
-    if (this.drag) this.drag(e.clientX - this.startDragX, e.clientY - this.startDragY);
+    const { x, y } = this.getCoordinates(e);
 
-    this.startDragX = e.clientX;
-    this.startDragY = e.clientY;
+    this.coordinates = {
+      startX: x,
+      startY: y,
+      currentX: x,
+      currentY: y,
+    };
   };
 
-  private mouseUpHandler = (e: MouseEvent): void => {
+  private moveHandler = (e: CoordinateEvent): void => {
+    if (this.isTwoTouches(e)) {
+      return;
+    }
+
     e.preventDefault();
-    this.mouseMoveHandler(e);
-    this.startDragX = null;
-    this.startDragY = null;
+
+    const { x, y } = this.getCoordinates(e);
+
+    if (!this.isInteractionStarted(this.coordinates)) return;
+
+    if (this.drag) {
+      this.drag(x - this.coordinates.currentX, y - this.coordinates.currentY);
+    }
+
+    this.coordinates.currentX = x;
+    this.coordinates.currentY = y;
+  };
+
+  private endHandler = (e: CoordinateEvent): void => {
+    e.preventDefault();
+
+    this.coordinates = null;
+    this.touchZoomDistance = 0;
+  };
+
+  private isInteractionStarted = (coordinates: Coordinates | null): coordinates is Coordinates =>
+    !!coordinates;
+
+  private isTwoTouches = (e: CoordinateEvent): boolean => {
+    return get(e, 'touches.length') === 2;
   };
 }
 
