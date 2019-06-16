@@ -5,7 +5,7 @@ git clone git@github.com:chernov-anton/clean-planet.git deploy
 cd deploy
 
 #build of globe with cloud
-git checkout clean-planet@1.0
+git checkout simple-globe@1.1
 npm i
 cp .env.example .env.local
 sed -i -e "s,<PUBLIC_URL>,/clean-planet/globe," .env.local
@@ -14,12 +14,12 @@ mkdir -p build-for-gh/globe
 mv build/* build-for-gh/globe
 
 #build of clickable globe with data
-git checkout data-planet@1.2
+git checkout data-planet@1.3
 npm i
 cp .env.example .env.local
-sed -i -e "s,<PUBLIC_URL>,/clean-planet/data," .env.local
+sed -i -e "s,<PUBLIC_URL>,/clean-planet," .env.local
 npm run build
-mkdir -p build-for-gh/data
-mv build/* build-for-gh/data
+mkdir -p build-for-gh
+mv build/* build-for-gh
 
 cd ../
