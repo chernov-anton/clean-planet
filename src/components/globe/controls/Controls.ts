@@ -19,6 +19,14 @@ interface Coordinates {
 
 type CoordinateEvent = MouseEvent | TouchEvent;
 
+interface ControlsOpts {
+  domObject: HTMLElement;
+  drag: MouseButtonListener;
+  click: MouseButtonListener;
+  zoomIn: Zoom;
+  zoomOut: Zoom;
+}
+
 class Controls {
   private coordinates: Coordinates | null;
   private touchZoomDistance: number;
@@ -27,13 +35,7 @@ class Controls {
   private readonly zoomIn: Zoom;
   private readonly zoomOut: Zoom;
 
-  public constructor(
-    domObject: HTMLElement,
-    drag: MouseButtonListener,
-    click: MouseButtonListener,
-    zoomIn: Zoom,
-    zoomOut: Zoom
-  ) {
+  public constructor({ domObject, drag, click, zoomIn, zoomOut }: ControlsOpts) {
     this.coordinates = null;
     this.touchZoomDistance = 0;
     this.drag = drag;

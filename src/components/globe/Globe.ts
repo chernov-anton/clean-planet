@@ -6,9 +6,14 @@ import CountrySelect from './country-select';
 import fragmentShader from '!raw-loader!glslify-loader!./shaders/fragment.glsl';
 /* eslint import/no-webpack-loader-syntax: off */
 import vertexShader from '!raw-loader!glslify-loader!./shaders/vertex.glsl';
-import { Uniforms } from './types';
+import { CountryChangeCallback, Uniforms } from './types';
 
 type RenderFunc = (delta: number, now: number) => void;
+interface GlobeOpts {
+  container: HTMLElement;
+  onCountryChange: CountryChangeCallback;
+  country: string;
+}
 
 const INDEXED_MAP_IMAGE = 'img/map_indexed.png';
 const OUTLINED_MAP_IMAGE = 'img/map_outline.png';
@@ -27,7 +32,8 @@ class Globe {
   private readonly globe: THREE.Mesh;
   private readonly mapUniforms: Uniforms;
 
-  public constructor(container: HTMLElement) {
+  public constructor({ container, onCountryChange, country }: GlobeOpts) {
+    console.log(country);
     this.container = container;
     this.renderer = Globe.getRenderer(container);
     this.scene = Globe.getScene();
@@ -53,15 +59,16 @@ class Globe {
       mapUniforms: this.mapUniforms,
       renderer: this.renderer,
       camera: this.camera,
+      onCountryChange,
     });
 
-    new Controls(
-      container,
-      this.drag.bind(this),
-      select.onCountryClick,
-      this.zoomIn.bind(this),
-      this.zoomOut.bind(this)
-    );
+    new Controls({
+      domObject: container,
+      drag: this.drag.bind(this),
+      click: select.onCountryClick,
+      zoomIn: this.zoomIn.bind(this),
+      zoomOut: this.zoomOut.bind(this),
+    });
   }
 
   private static getRenderer(container: HTMLElement): THREE.WebGLRenderer {
@@ -176,7 +183,7 @@ class Globe {
     if (this.camera.position.length() > MAX_ZOOM) {
       this.camera.position
         .sub(this.center)
-        .multiplyScalar(0.95)
+        .multiplyScalar(0.99)
         .add(this.center);
     }
   }
@@ -185,7 +192,7 @@ class Globe {
     if (this.camera.position.length() < MIN_ZOOM) {
       this.camera.position
         .sub(this.center)
-        .multiplyScalar(1.05)
+        .multiplyScalar(1.01)
         .add(this.center);
     }
   }

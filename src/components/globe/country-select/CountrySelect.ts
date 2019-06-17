@@ -1,6 +1,6 @@
 import countryColorMap from './countryColorMap';
 import * as THREE from 'three';
-import { Uniforms } from '../types';
+import { CountryChangeCallback, Uniforms } from '../types';
 import findKey from 'lodash/findKey';
 
 interface CountrySelectParams {
@@ -10,6 +10,7 @@ interface CountrySelectParams {
   lookupContext: CanvasRenderingContext2D;
   lookupTexture: THREE.Texture;
   camera: THREE.PerspectiveCamera;
+  onCountryChange: CountryChangeCallback;
 }
 
 class CountrySelect {
@@ -20,6 +21,7 @@ class CountrySelect {
   private readonly scene: THREE.Scene;
   private mapUniforms: Uniforms;
   private previousColorIndex: number;
+  private readonly onCountryChange: CountryChangeCallback;
 
   public constructor({
     scene,
@@ -28,6 +30,7 @@ class CountrySelect {
     lookupContext,
     lookupTexture,
     camera,
+    onCountryChange,
   }: CountrySelectParams) {
     this.scene = scene;
     this.renderer = renderer;
@@ -36,6 +39,7 @@ class CountrySelect {
     this.lookupTexture = lookupTexture;
     this.camera = camera;
     this.previousColorIndex = 0;
+    this.onCountryChange = onCountryChange;
 
     this.highlightOcean();
   }
@@ -57,6 +61,7 @@ class CountrySelect {
 
       if (countryCode) {
         this.highlightCountry(countryCode);
+        this.onCountryChange(countryCode);
       }
     }
 
