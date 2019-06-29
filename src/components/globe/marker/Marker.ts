@@ -20,25 +20,16 @@ function getElement(selector: string, root?: HTMLElement): HTMLElement {
   return element;
 }
 
-/*var projector = new THREE.Projector();
-var vector = projector.projectVector( vec3.clone(), camera );
-var result = new Object();
-var windowWidth = window.innerWidth;
-var minWidth = 1280;
-if(windowWidth < minWidth) {
-  windowWidth = minWidth;
-}
-console.log(vector);
-result.x = Math.round( vector.x * (windowWidth/2) ) + windowWidth/2;
-result.y = Math.round( (0-vector.y) * (window.innerHeight/2) ) + window.innerHeight/2;*/
-
-function getDisplayPosition(vec3: THREE.Vector3, camera: THREE.Camera): { x: number; y: number } {
+function getDisplayPosition(vector: THREE.Vector3): { x: number; y: number } {
   const container = getElement('#main');
-  let vector = vec3.clone().project(camera);
   return {
     x: Math.round(vector.x * (container.clientWidth / 2) + container.clientWidth / 2),
     y: Math.round((0 - vector.y) * (container.clientHeight / 2) + container.clientHeight / 2),
   };
+}
+
+function getCameraProjection(vec3: THREE.Vector3, camera: THREE.Camera): THREE.Vector3 {
+  return vec3.clone().project(camera);
 }
 
 function getDistance(vector1: THREE.Vector3, vector2: THREE.Vector3): number {
@@ -73,6 +64,13 @@ export class Marker {
     this.htmlElement.style.zIndex = z;
   }
 
+  public setVisible(visible: boolean): void {
+    if (!visible) this.htmlElement.style.display = 'none';
+    else {
+      this.htmlElement.style.display = 'inline';
+    }
+  }
+
   public setSize(size: number): void {
     let detailSize = Math.floor(2 + size * 0.5);
     this.detailLayer.style.fontSize = `${detailSize}pt`;
@@ -85,13 +83,17 @@ export class Marker {
     }
   }
 
-  public update(camera: THREE.Camera): void {
-    let screenPos = getDisplayPosition(this.country.center, camera);
-    let s = 5 - getDistance(camera.position, new Vector3());
+  public update(camera: THREE.Camera, globe: THREE.Object3D): void {
+    const matrix = globe.matrixWorld;
+    const absolutePosition = this.country.center.clone().applyMatrix4(matrix);
+    const cameraProjectionPosition = getCameraProjection(absolutePosition, camera)
+    let screenPos = getDisplayPosition(cameraProjectionPosition);
+    let size = (5 - getDistance(camera.position, new Vector3())) * 3;
 
-    this.setSize(s * 3);
+    this.setSize(size);
+    this.setVisible(cameraProjectionPosition.z < 0.989);
 
-    let zIndex = Math.floor(1000 - this.country.center.z + s);
+    let zIndex = Math.floor(1000 - this.country.center.z + size);
 
     this.setPosition(screenPos.x.toString(), screenPos.y.toString(), zIndex.toString());
   }

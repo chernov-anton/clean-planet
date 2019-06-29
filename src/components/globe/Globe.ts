@@ -202,7 +202,7 @@ class Globe {
 
     renderFuncs.push(
       (delta: number): void => {
-        //globe.rotateZ((1 / 32) * delta);
+        globe.rotateZ((1 / 32) * delta);
       }
     );
 
@@ -231,7 +231,7 @@ class Globe {
         }
       );
 
-      countrySelect.marker && countrySelect.marker.update(camera);
+      countrySelect.marker && countrySelect.marker.update(camera, globe);
 
       // keep looping
       requestAnimationFrame(animate);
