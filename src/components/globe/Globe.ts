@@ -12,7 +12,6 @@ type RenderFunc = (delta: number, now: number) => void;
 interface GlobeOpts {
   container: HTMLElement;
   onCountryChange: CountryChangeCallback;
-  country: string;
 }
 
 const INDEXED_MAP_IMAGE = 'img/map_indexed.png';
@@ -31,9 +30,9 @@ class Globe {
   private readonly center: THREE.Vector3;
   private readonly globe: THREE.Mesh;
   private readonly mapUniforms: Uniforms;
+  private readonly countrySelect: CountrySelect;
 
-  public constructor({ container, onCountryChange, country }: GlobeOpts) {
-    console.log(country);
+  public constructor({ container, onCountryChange }: GlobeOpts) {
     this.container = container;
     this.renderer = Globe.getRenderer(container);
     this.scene = Globe.getScene();
@@ -52,7 +51,7 @@ class Globe {
     this.globe = Globe.createGlobe(this.mapUniforms);
     this.scene.add(this.globe);
 
-    const select = new CountrySelect({
+    this.countrySelect = new CountrySelect({
       scene: this.scene,
       lookupContext: this.lookupContext,
       lookupTexture: this.lookupTexture,
@@ -65,7 +64,7 @@ class Globe {
     new Controls({
       domObject: container,
       drag: this.drag.bind(this),
-      click: select.onCountryClick,
+      click: this.countrySelect.onCountryClick,
       zoomIn: this.zoomIn.bind(this),
       zoomOut: this.zoomOut.bind(this),
     });
@@ -198,12 +197,12 @@ class Globe {
   }
 
   public render(): void {
-    const { renderer, globe, scene, camera, container } = this;
+    const { renderer, globe, scene, camera, container, countrySelect } = this;
     const renderFuncs: RenderFunc[] = [];
 
     renderFuncs.push(
       (delta: number): void => {
-        globe.rotateZ((1 / 32) * delta);
+        //globe.rotateZ((1 / 32) * delta);
       }
     );
 
@@ -231,6 +230,8 @@ class Globe {
           renderFunc(deltaMsec / 1000, nowMsec / 1000);
         }
       );
+
+      countrySelect.marker && countrySelect.marker.update(camera);
 
       // keep looping
       requestAnimationFrame(animate);

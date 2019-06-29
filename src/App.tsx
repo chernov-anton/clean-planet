@@ -11,11 +11,10 @@ function useGlobe(country: string, setCountry: CountryChangeCallback): RefObject
       const globe = new Globe({
         container: threeContainer.current,
         onCountryChange: setCountry,
-        country,
       });
       globe.render();
     }
-  }, [country, setCountry]);
+  }, [setCountry]);
 
   return threeContainer;
 }
@@ -27,7 +26,7 @@ function App(): ReactElement {
   return (
     <div className={style.app}>
       <header className={style.appHeader}>CLEAN PLANET</header>
-      <main className={style.threeContainer} ref={threeContainer} />
+      <main id="main" className={style.threeContainer} ref={threeContainer} />
       <footer>© Anton Chernov 2019</footer>
     </div>
   );
