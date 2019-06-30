@@ -1,17 +1,13 @@
 import React, { useEffect, useRef, ReactElement, RefObject, useState } from 'react';
 import style from './app.module.css';
 import Globe from './components/globe';
-import { CountryChangeCallback } from './components/globe/types';
 
-function useGlobe(country: string, setCountry: CountryChangeCallback): RefObject<HTMLElement> {
+function useGlobe(country: string, setCountry: (country: string) => void): RefObject<HTMLElement> {
   const threeContainer = useRef<HTMLElement>(null);
 
   useEffect((): void => {
     if (threeContainer.current) {
-      const globe = new Globe({
-        container: threeContainer.current,
-        onCountryChange: setCountry,
-      });
+      const globe = new Globe(threeContainer.current, setCountry);
       globe.render();
     }
   }, [setCountry]);
@@ -22,6 +18,7 @@ function useGlobe(country: string, setCountry: CountryChangeCallback): RefObject
 function App(): ReactElement {
   const [country, setCountry] = useState('CH');
   const threeContainer = useGlobe(country, setCountry);
+  console.log(country);
 
   return (
     <div className={style.app}>

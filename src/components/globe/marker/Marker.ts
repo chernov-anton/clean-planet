@@ -86,7 +86,7 @@ export class Marker {
   public update(camera: THREE.Camera, globe: THREE.Object3D): void {
     const matrix = globe.matrixWorld;
     const absolutePosition = this.country.center.clone().applyMatrix4(matrix);
-    const cameraProjectionPosition = getCameraProjection(absolutePosition, camera)
+    const cameraProjectionPosition = getCameraProjection(absolutePosition, camera);
     let screenPos = getDisplayPosition(cameraProjectionPosition);
     let size = (5 - getDistance(camera.position, new Vector3())) * 3;
 
