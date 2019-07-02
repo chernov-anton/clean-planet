@@ -2,7 +2,6 @@ import countryColorMap from './countryColorMap';
 import * as THREE from 'three';
 import { CountryChangeCallback, Uniforms } from '../types';
 import findKey from 'lodash/findKey';
-import { getMarker, removeMarker, Marker } from '../marker/Marker';
 
 interface CountrySelectParams {
   scene: THREE.Scene;
@@ -23,7 +22,6 @@ class CountrySelect {
   private mapUniforms: Uniforms;
   private previousColorIndex: number;
   private readonly onCountryChange: CountryChangeCallback;
-  public marker?: Marker;
 
   public constructor({
     scene,
@@ -63,10 +61,6 @@ class CountrySelect {
 
       if (countryCode) {
         this.highlightCountry(countryCode);
-        if (this.marker) {
-          removeMarker(this.marker);
-        }
-        this.marker = getMarker(countryCode);
         this.onCountryChange(countryCode);
       }
     }

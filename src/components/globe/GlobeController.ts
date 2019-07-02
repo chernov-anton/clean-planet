@@ -43,8 +43,6 @@ class GlobeController {
     this.renderFuncs.push(this.rotate);
 
     this.renderFuncs.push(this.render);
-
-    this.renderFuncs.push(this.updateMarker);
   }
 
   private resize = (): void => {
@@ -98,14 +96,13 @@ class GlobeController {
     this.globeModel.globeMesh.rotateZ((1 / 32) * delta);
   };
 
+  public addRenderFunc(func: RenderFunc): void {
+    this.renderFuncs.push(func);
+  }
+
   private render = (): void => {
     const { renderer, scene, camera } = this.globeModel;
     renderer.render(scene, camera);
-  };
-
-  private updateMarker = (): void => {
-    this.countrySelect.marker &&
-      this.countrySelect.marker.update(this.globeModel.camera, this.globeModel.globeMesh);
   };
 
   private animate = (nowMs: number): void => {
