@@ -32,7 +32,7 @@ class MarkerContainer extends PureComponent<Props, State> {
     const centerVector = new Vector3(country.center.x, country.center.y, country.center.z);
     const absolutePosition = centerVector.applyMatrix4(matrix);
 
-    let size = (5 - getDistance(camera.position, new Vector3())) * 8;
+    let size = (5 - getDistance(camera.position, new Vector3())) * 7;
     this.setSize(size);
 
     const isVisible = getDistance(camera.position, absolutePosition) < camera.position.length();

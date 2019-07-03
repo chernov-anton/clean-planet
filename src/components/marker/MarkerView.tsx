@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import style from './marker.module.css';
 
 export interface Props {
   isVisible: boolean;
@@ -11,24 +12,17 @@ export interface Props {
 }
 
 const MarkerView = ({ isVisible, position, fontSize, text }: Props): ReactElement => {
+  const viewStyle = {
+    display: isVisible ? 'inline' : 'none',
+    left: position.x,
+    top: position.y,
+    fontSize: fontSize,
+  };
+
   return (
-    <table
-      style={{
-        display: isVisible ? 'inline' : 'none',
-        left: position.x,
-        top: position.y,
-        fontSize: fontSize,
-      }}
-      className="marker"
-    >
-      <tbody>
-        <tr>
-          <td>
-            <span className="country">{text}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div style={viewStyle} className={style.marker}>
+      {text}
+    </div>
   );
 };
 

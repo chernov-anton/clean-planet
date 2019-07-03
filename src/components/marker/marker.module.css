@@ -1,0 +1,14 @@
+.marker {
+  position: absolute;
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.87);
+  color: #ffffff;
+  font-size: 4pt;
+  font-family: 'RopaSans', sans-serif;
+  -webkit-user-select: none;
+  margin: 0;
+  border: 0;
+  padding: 10px;
+  overflow: hidden;
+  cursor: pointer;
+}

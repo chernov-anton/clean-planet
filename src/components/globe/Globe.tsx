@@ -4,21 +4,17 @@ import GlobeModel from './GlobeModel';
 import GlobeModelFactory from './GlobeModelFactory';
 import GlobeController from './GlobeController';
 
-interface Props {
-  className: string;
-}
-
 interface State {
   country: string | null;
 }
 
-class Globe extends PureComponent<Props, State> {
+class Globe extends PureComponent<{}, State> {
   private globeModel?: GlobeModel;
   private globeController?: GlobeController;
   private readonly mainRef: RefObject<HTMLElement>;
   private readonly markerRef: RefObject<Marker>;
 
-  public constructor(props: Props) {
+  public constructor(props: {}) {
     super(props);
 
     this.mainRef = React.createRef();
@@ -51,7 +47,7 @@ class Globe extends PureComponent<Props, State> {
     const { country } = this.state;
     return (
       <>
-        <main className={this.props.className} ref={this.mainRef} />
+        <main ref={this.mainRef} />
         {country && <Marker countryCode={country} ref={this.markerRef} />}
       </>
     );
