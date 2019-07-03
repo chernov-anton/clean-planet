@@ -14,7 +14,7 @@ mkdir -p build-for-gh/globe
 mv build/* build-for-gh/globe
 
 #build of clickable globe with data
-git checkout data-planet@1.3
+git checkout data-planet@1.4
 npm i
 cp .env.example .env.local
 sed -i -e "s,<PUBLIC_URL>,/clean-planet," .env.local
