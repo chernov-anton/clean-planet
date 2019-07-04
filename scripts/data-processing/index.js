@@ -12,15 +12,37 @@ const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 
 async function main() {
-  const csv = await readFileAsync(path.join(__dirname, INPUT_FILE_NAME), ENCODING);
-  console.log(csv);
+  try {
+    const csv = await readFileAsync(path.join(__dirname, INPUT_FILE_NAME), ENCODING);
 
-  const json = papa.parse(csv);
-  console.log(json);
+    const json = papa.parse(csv, { header: true });
 
-  await writeFileAsync(path.join(__dirname, OUTPUT_FILE_NAME), JSON.stringify(json.data, null, 2), {
-    encoding: ENCODING,
-  });
+    const dataToWrite = processJSON(json);
+
+    await writeFileAsync(
+      path.join(__dirname, OUTPUT_FILE_NAME),
+      JSON.stringify(dataToWrite, null, 2),
+      {
+        encoding: ENCODING,
+      }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function processJSON(json) {
+  return json.data.reduce((result, entry) => {
+    const { Entity, Year, ...data } = entry;
+
+    if (!result[Entity]) {
+      result[Entity] = {};
+    }
+
+    result[Entity][Year] = data;
+
+    return result;
+  }, {});
 }
 
 main();
