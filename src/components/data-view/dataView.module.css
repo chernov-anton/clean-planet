@@ -1,0 +1,8 @@
+.dataView {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  font-size: 18px;
+  padding: 10px;
+  color: white;
+}

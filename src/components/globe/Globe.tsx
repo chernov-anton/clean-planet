@@ -1,11 +1,12 @@
 import React, { PureComponent, ReactNode, RefObject } from 'react';
-import Marker from '../marker';
+import Marker from 'components/marker';
+import DataView from 'components/data-view';
 import GlobeModel from './GlobeModel';
 import GlobeModelFactory from './GlobeModelFactory';
 import GlobeController from './GlobeController';
 
 interface State {
-  country: string | null;
+  countryCode: string | null;
 }
 
 class Globe extends PureComponent<{}, State> {
@@ -19,7 +20,7 @@ class Globe extends PureComponent<{}, State> {
 
     this.mainRef = React.createRef();
     this.markerRef = React.createRef();
-    this.state = { country: null };
+    this.state = { countryCode: null };
   }
 
   public componentDidMount(): void {
@@ -31,7 +32,7 @@ class Globe extends PureComponent<{}, State> {
     }
   }
 
-  private setCountry = (country: string): void => this.setState({ country });
+  private setCountry = (countryCode: string): void => this.setState({ countryCode });
 
   private updateMarker = (): void => {
     if (this.mainRef.current && this.markerRef.current && this.globeModel) {
@@ -44,11 +45,17 @@ class Globe extends PureComponent<{}, State> {
   };
 
   public render(): ReactNode {
-    const { country } = this.state;
+    const { countryCode } = this.state;
+    console.log(countryCode);
     return (
       <>
         <main ref={this.mainRef} />
-        {country && <Marker countryCode={country} ref={this.markerRef} />}
+        {countryCode && (
+          <>
+            <Marker countryCode={countryCode} ref={this.markerRef} />
+            <DataView countryCode={countryCode} />
+          </>
+        )}
       </>
     );
   }
