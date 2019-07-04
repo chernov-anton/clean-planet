@@ -31,4 +31,5 @@ yarn-error.log*
 tmp
 build-for-gh
 deploy
+scripts/data-processing/data.json
 
