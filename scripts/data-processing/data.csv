@@ -37,8 +37,8 @@ Brazil,2010,4.5029,1.4804,1.3813
 Brazil,2025,1.3813,,
 British Virgin Islands,2010,0.0027,0.0002,0.0001
 British Virgin Islands,2025,0.0001,,
-Brunei,2010,0.0034,0.0003,0.0005
-Brunei,2025,0.0005,,
+Brunei Darussalam,2010,0.0034,0.0003,0.0005
+Brunei Darussalam,2025,0.0005,,
 Bulgaria,2010,0.0563,0.0588,0.0373
 Bulgaria,2025,0.0373,,
 Cambodia,2010,0.0335,0.0932,0.0910
@@ -51,8 +51,10 @@ Cape Verde,2010,0.0124,0.0294,0.0267
 Cape Verde,2025,0.0267,,
 Cayman Islands,2010,0.0048,0.0003,0.0002
 Cayman Islands,2025,0.0002,,
-Channel Islands,2010,0.0141,0.0009,0.0005
-Channel Islands,2025,0.0005,,
+Guernsey,2010,0.0141,0.0009,0.0005
+Guernsey,2025,0.0005,,
+Jersey,2010,0.0141,0.0009,0.0005
+Jersey,2025,0.0005,,
 Chile,2010,0.2439,0.0683,0.0616
 Chile,2025,0.0616,,
 China,2010,11.6192,27.6966,25.7893
@@ -81,8 +83,8 @@ Curacao,2010,0.0132,0.0008,0.0005
 Curacao,2025,0.0005,,
 Cyprus,2010,0.0763,0.0057,0.0038
 Cyprus,2025,0.0038,,
-Democratic Republic of Congo,2010,0.0177,0.0478,0.0629
-Democratic Republic of Congo,2025,0.0629,,
+The Democratic Republic of the Congo,2010,0.0177,0.0478,0.0629
+The Democratic Republic of the Congo,2025,0.0629,,
 Denmark,2010,0.0900,0.0056,0.0061
 Denmark,2025,0.0061,,
 Djibouti,2010,0.0233,0.0544,0.0660
@@ -103,8 +105,8 @@ Eritrea,2010,0.0208,0.0511,0.0629
 Eritrea,2025,0.0629,,
 Estonia,2010,0.0566,0.0188,0.0121
 Estonia,2025,0.0121,,
-Faeroe Islands,2010,0.0047,0.0003,0.0002
-Faeroe Islands,2025,0.0002,,
+Faroe Islands,2010,0.0047,0.0003,0.0002
+Faroe Islands,2025,0.0002,,
 Falkland Islands,2010,0.0002,0.0000,0.0000
 Falkland Islands,2025,0.0000,,
 Fiji,2010,0.0618,0.1547,0.1028
@@ -213,8 +215,8 @@ Mauritius,2010,0.1055,0.1760,0.1059
 Mauritius,2025,0.1059,,
 Mexico,2010,0.7162,0.3182,0.3379
 Mexico,2025,0.3379,,
-Micronesia (country),2010,0.0058,0.0151,0.0155
-Micronesia (country),2025,0.0155,,
+Micronesia,2010,0.0058,0.0151,0.0155
+Micronesia,2025,0.0155,,
 Monaco,2010,0.0031,0.0002,0.0001
 Monaco,2025,0.0001,,
 Montenegro,2010,0.0137,0.0139,0.0105
@@ -233,8 +235,6 @@ Nauru,2010,0.0008,0.0017,0.0015
 Nauru,2025,0.0015,,
 Netherlands,2010,1.3923,0.0870,0.0469
 Netherlands,2025,0.0469,,
-Netherlands Antilles,2010,0.0209,0.0013,0.0005
-Netherlands Antilles,2025,0.0005,,
 New Caledonia,2010,0.0237,0.0015,0.0010
 New Caledonia,2025,0.0010,,
 New Zealand,2010,0.4667,0.0292,0.0167
@@ -281,8 +281,8 @@ Reunion,2010,0.0426,0.0027,0.0023
 Reunion,2025,0.0023,,
 Romania,2010,0.0132,0.0113,0.0120
 Romania,2025,0.0120,,
-Russia,2010,0.4409,0.2536,0.1867
-Russia,2025,0.1867,,
+Russian Federation,2010,0.4409,0.2536,0.1867
+Russian Federation,2025,0.1867,,
 Saint Helena,2010,0.0004,0.0003,0.0003
 Saint Helena,2025,0.0003,,
 Saint Kitts and Nevis,2010,0.0086,0.0022,0.0011

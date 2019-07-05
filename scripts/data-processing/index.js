@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const papa = require('papaparse');
 const util = require('util');
+const countryNames = require('./countryNames');
+const { findKey } = require('lodash');
 
 const INPUT_FILE_NAME = 'data.csv';
 const OUTPUT_FILE_NAME = 'data.json';
@@ -17,6 +19,8 @@ async function main() {
 
     const json = papa.parse(csv, { header: true });
 
+    console.log(Object.keys(json.data).length);
+    console.log(Object.keys(countryNames).length);
     const dataToWrite = processJSON(json);
 
     await writeFileAsync(
@@ -35,11 +39,17 @@ function processJSON(json) {
   return json.data.reduce((result, entry) => {
     const { Entity, Year, ...data } = entry;
 
-    if (!result[Entity]) {
-      result[Entity] = {};
+    const key = findKey(countryNames, name => name === Entity.toUpperCase());
+
+    if (!key) {
+      throw new Error(`Can't find key! for ${Entity.toUpperCase()}`);
     }
 
-    result[Entity][Year] = data;
+    if (!result[key]) {
+      result[key] = { name: Entity };
+    }
+
+    result[key][Year] = data;
 
     return result;
   }, {});
