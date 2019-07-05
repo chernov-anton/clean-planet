@@ -272,7 +272,7 @@
   "RE": {
     "lat": "-21.1",
     "lon": "55.6",
-    "countryName": "RÉUNION",
+    "countryName": "REUNION",
     "center": {
       "x": 0.3348467681793906,
       "y": 0.33251721894086905,
@@ -612,7 +612,7 @@
   "VE": {
     "lat": "8",
     "lon": "-66",
-    "countryName": "VENEZUELA, BOLIVARIAN REPUBLIC OF",
+    "countryName": "VENEZUELA",
     "center": {
       "x": 0.11250937551630895,
       "y": -0.47968617034405137,
@@ -632,7 +632,7 @@
   "PS": {
     "lat": "32",
     "lon": "35.25",
-    "countryName": "PALESTINIAN TERRITORY, OCCUPIED",
+    "countryName": "PALESTINE",
     "center": {
       "x": 0.37823205959292366,
       "y": 0.17197181786525176,
@@ -852,7 +852,7 @@
   "VN": {
     "lat": "16",
     "lon": "106",
-    "countryName": "VIET NAM",
+    "countryName": "VIETNAM",
     "center": {
       "x": -0.04314697177318318,
       "y": 0.4741054038477969,
@@ -1202,7 +1202,7 @@
   "SH": {
     "lat": "-15.9333",
     "lon": "-5.7",
-    "countryName": "SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA",
+    "countryName": "SAINT HELENA",
     "center": {
       "x": 0.4648982571903776,
       "y": -0.13770913756414155,
@@ -1242,7 +1242,7 @@
   "FK": {
     "lat": "-51.75",
     "lon": "-59",
-    "countryName": "FALKLAND ISLANDS (MALVINAS)",
+    "countryName": "FALKLAND ISLANDS",
     "center": {
       "x": 0.11109207561380924,
       "y": -0.30193941975318417,
@@ -1252,7 +1252,7 @@
   "FM": {
     "lat": "6.9167",
     "lon": "158.25",
-    "countryName": "MICRONESIA, FEDERATED STATES OF",
+    "countryName": "MICRONESIA",
     "center": {
       "x": -0.4165931427498037,
       "y": 0.2659104809122495,
@@ -1412,7 +1412,7 @@
   "CI": {
     "lat": "8",
     "lon": "-5",
-    "countryName": "CÔTE D'IVOIRE",
+    "countryName": "COTE D'IVOIRE",
     "center": {
       "x": 0.47408860544334674,
       "y": -0.13415355301740908,
@@ -1472,7 +1472,7 @@
   "CC": {
     "lat": "-12.5",
     "lon": "96.8333",
-    "countryName": "COCOS (KEELING) ISLANDS",
+    "countryName": "COCOS ISLANDS",
     "center": {
       "x": 0.03398694702579943,
       "y": 0.49012943638867634,
@@ -1592,7 +1592,7 @@
   "SY": {
     "lat": "35",
     "lon": "38",
-    "countryName": "SYRIAN ARAB REPUBLIC",
+    "countryName": "SYRIA",
     "center": {
       "x": 0.3560917959648956,
       "y": 0.1830063248957662,
@@ -1692,7 +1692,7 @@
   "KR": {
     "lat": "37",
     "lon": "127.5",
-    "countryName": "KOREA, REPUBLIC OF",
+    "countryName": "SOUTH KOREA",
     "center": {
       "x": -0.17508567699318053,
       "y": 0.3481191198537112,
@@ -1712,7 +1712,7 @@
   "KP": {
     "lat": "40",
     "lon": "127",
-    "countryName": "KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF",
+    "countryName": "NORTH KOREA",
     "center": {
       "x": -0.16456600848788047,
       "y": 0.33444229005339254,
@@ -1862,7 +1862,7 @@
   "VG": {
     "lat": "18.5",
     "lon": "-64.5",
-    "countryName": "VIRGIN ISLANDS, BRITISH",
+    "countryName": "BRITISH VIRGIN ISLANDS",
     "center": {
       "x": 0.11899838414797352,
       "y": -0.4535948610677059,
@@ -2222,7 +2222,7 @@
   "VI": {
     "lat": "18.3333",
     "lon": "-64.8333",
-    "countryName": "VIRGIN ISLANDS, U.S.",
+    "countryName": "U.S. VIRGIN ISLANDS",
     "center": {
       "x": 0.11648247815254682,
       "y": -0.45476640954066233,
@@ -2242,7 +2242,7 @@
   "IR": {
     "lat": "32",
     "lon": "53",
-    "countryName": "IRAN, ISLAMIC REPUBLIC OF",
+    "countryName": "IRAN",
     "center": {
       "x": 0.30779855714066384,
       "y": 0.27909468870960225,
@@ -2352,7 +2352,7 @@
   "TZ": {
     "lat": "-6",
     "lon": "35",
-    "countryName": "TANZANIA, UNITED REPUBLIC OF",
+    "countryName": "TANZANIA",
     "center": {
       "x": 0.4548352984131311,
       "y": 0.20441108809898628,
